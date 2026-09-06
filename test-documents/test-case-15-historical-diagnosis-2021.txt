@@ -1,0 +1,31 @@
+HOSPITAL A
+Department of Internal Medicine
+Patient Consultation Note
+
+Date: January 15, 2021
+Patient: Test Patient O
+DOB: 01/01/1980
+MRN: 34563456
+
+CHIEF COMPLAINT:
+Routine checkup
+
+HISTORY OF PRESENT ILLNESS:
+Patient presents for annual physical examination. No acute complaints. Historical Condition A remains resolved with no recurrence since 2015.
+
+PHYSICAL EXAMINATION:
+Vitals: BP 118/75, HR 72, Temp 98.4°F
+General: Well-developed, well-nourished
+All systems within normal limits
+
+ASSESSMENT:
+Healthy adult
+Condition A - resolved, no recurrence
+
+PLAN:
+1. Routine screening labs
+2. Continue monitoring
+3. Follow-up as needed
+
+Physician: Dr. Smith
+Dictated: January 15, 2021

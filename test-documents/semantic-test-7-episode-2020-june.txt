@@ -1,0 +1,12 @@
+Date: June 15, 2020
+Patient: Test Patient
+
+Consultation Note
+
+Chief Complaint: Follow-up for dizziness.
+
+History: Patient reports continued dizziness since March 2020. Symptoms persist despite initial evaluation.
+
+Assessment: Ongoing dizziness - same episode as March 2020.
+
+Plan: Continue evaluation and consider further testing.

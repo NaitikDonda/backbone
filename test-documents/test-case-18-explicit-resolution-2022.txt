@@ -1,0 +1,29 @@
+HOSPITAL A
+Department of Internal Medicine
+Patient Consultation Note
+
+Date: July 20, 2022
+Patient: Test Patient R
+DOB: 01/01/1980
+MRN: 67896789
+
+CHIEF COMPLAINT:
+Fatigue
+
+HISTORY OF PRESENT ILLNESS:
+Patient returns with continued fatigue. Symptoms have persisted since last visit. No significant improvement.
+
+PHYSICAL EXAMINATION:
+Vitals: BP 118/78, HR 76, Temp 98.4°F
+General: Well-developed, no acute distress
+
+ASSESSMENT:
+Fatigue, persistent
+
+PLAN:
+1. Repeat CBC
+2. Consider specialist referral
+3. Follow-up in 4 weeks
+
+Physician: Dr. Smith
+Dictated: July 20, 2022

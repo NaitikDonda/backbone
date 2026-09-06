@@ -1,0 +1,28 @@
+HOSPITAL A
+Department of Internal Medicine
+Patient Consultation Note
+
+Date: August 15, 2023
+Patient: Test Patient P
+DOB: 01/01/1980
+MRN: 45674567
+
+CHIEF COMPLAINT:
+Follow-up
+
+HISTORY OF PRESENT ILLNESS:
+Patient returns for follow-up. Reports that Medication A was discontinued 2 months ago due to side effects. Fatigue has resolved since discontinuation. Patient now feeling well.
+
+PHYSICAL EXAMINATION:
+Vitals: BP 118/78, HR 76, Temp 98.4°F
+General: Well-developed, no acute distress
+
+ASSESSMENT:
+Fatigue resolved after medication discontinuation
+
+PLAN:
+1. No further treatment needed
+2. Follow-up as needed
+
+Physician: Dr. Smith
+Dictated: August 15, 2023

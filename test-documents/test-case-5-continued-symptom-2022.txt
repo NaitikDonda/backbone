@@ -1,0 +1,29 @@
+HOSPITAL A
+Department of Internal Medicine
+Patient Consultation Note
+
+Date: May 10, 2022
+Patient: Test Patient E
+DOB: 01/01/1980
+MRN: 33334444
+
+CHIEF COMPLAINT:
+Fatigue
+
+HISTORY OF PRESENT ILLNESS:
+Patient presents with fatigue. Reports feeling tired for 2 months. No significant other symptoms.
+
+PHYSICAL EXAMINATION:
+Vitals: BP 120/80, HR 75, Temp 98.6°F
+General: Well-developed, no acute distress
+
+ASSESSMENT:
+Fatigue, unspecified
+
+PLAN:
+1. Prescribe iron supplement 325 mg daily
+2. Prescribe multivitamin daily
+3. Follow-up in 4 weeks
+
+Physician: Dr. Smith
+Dictated: May 10, 2022

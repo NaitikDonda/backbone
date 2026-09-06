@@ -1,0 +1,12 @@
+Date: June 12, 2018
+Patient: Test Patient
+
+Consultation Note
+
+Chief Complaint: Patient reports nausea.
+
+History: The patient describes episodes of nausea over the past month.
+
+Assessment: Nausea documented.
+
+Plan: Provide antiemetic and monitor.

@@ -1,0 +1,12 @@
+Date: March 10, 2021
+Patient: Test Patient
+
+Consultation Note
+
+Chief Complaint: Follow-up visit.
+
+History: Patient denies any headaches since the previous visit in 2020. No recurrence of headache symptoms reported.
+
+Assessment: No headache - negative evidence documented.
+
+Plan: Continue routine follow-up.

@@ -1,0 +1,29 @@
+HOSPITAL A
+Department of Internal Medicine
+Patient Consultation Note
+
+Date: August 15, 2022
+Patient: Test Patient E
+DOB: 01/01/1980
+MRN: 33334444
+
+CHIEF COMPLAINT:
+Fatigue
+
+HISTORY OF PRESENT ILLNESS:
+Patient returns with continued fatigue despite iron supplementation started 3 months ago. Reports no improvement in energy levels. Still experiencing tiredness throughout the day.
+
+PHYSICAL EXAMINATION:
+Vitals: BP 118/78, HR 76, Temp 98.4°F
+General: Well-developed, no acute distress
+
+ASSESSMENT:
+Fatigue, persistent despite treatment
+
+PLAN:
+1. Check iron studies
+2. Consider alternative causes
+3. Referral to hematology
+
+Physician: Dr. Smith
+Dictated: August 15, 2022

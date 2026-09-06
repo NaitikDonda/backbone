@@ -1,0 +1,211 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: #F8F7F4;
+    color: #1A1915;
+    -webkit-font-smoothing: antialiased;
+  }
+  
+  /* Smooth transitions for interactive elements */
+  button, a, [role="button"] {
+    transition-property: color, background-color, border-color;
+    transition-duration: 250ms;
+  }
+  
+  /* Focus states for accessibility */
+  button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px #0D4F4F, 0 0 0 4px white;
+  }
+}
+
+@layer components {
+  /* Badge component */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.125rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    line-height: 1.125rem;
+    font-weight: 500;
+  }
+  
+  .badge-primary {
+    background-color: #0D4F4F;
+    color: white;
+  }
+  
+  .badge-error {
+    background-color: #A84444;
+    color: white;
+  }
+  
+  .badge-warning {
+    background-color: #C4A35A;
+    color: white;
+  }
+  
+  .badge-info {
+    background-color: #3B7A7A;
+    color: white;
+  }
+  
+  /* Button base */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    border-radius: 4px;
+    cursor: pointer;
+    border: none;
+    text-decoration: none;
+    transition: all 250ms ease;
+  }
+  
+  .btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px #0D4F4F, 0 0 0 4px white;
+  }
+  
+  .btn-primary {
+    background-color: #0D4F4F;
+    color: white;
+  }
+  
+  .btn-primary:hover {
+    background-color: #1A6B6B;
+  }
+  
+  .btn-secondary {
+    background-color: white;
+    border: 1px solid #D4D3CD;
+    color: #1A1915;
+  }
+  
+  .btn-secondary:hover {
+    border-color: #6B6A62;
+    background-color: #F8F7F4;
+  }
+  
+  .btn-ghost {
+    color: #3D3C35;
+    background-color: transparent;
+    border: none;
+    padding: 0.5rem 1rem;
+  }
+  
+  .btn-ghost:hover {
+    color: #1A1915;
+    background-color: white;
+  }
+}
+
+@layer utilities {
+  /* Text truncation */
+  .line-clamp-1 {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  /* Custom scrollbar */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background-color: #F8F7F4;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #6B6A62;
+    border-radius: 9999px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: #8F8E85;
+  }
+
+  /* Fade in animation */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 600ms ease-out forwards;
+  }
+
+  .animate-delay-100 {
+    animation-delay: 100ms;
+  }
+
+  .animate-delay-200 {
+    animation-delay: 200ms;
+  }
+
+  .animate-delay-300 {
+    animation-delay: 300ms;
+  }
+
+  .animate-delay-400 {
+    animation-delay: 400ms;
+  }
+
+  /* Pulse animation for timeline nodes */
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  .animate-pulse-slow {
+    animation: pulse 3s ease-in-out infinite;
+  }
+
+  /* Line drawing animation */
+  @keyframes drawLine {
+    from {
+      stroke-dashoffset: 100;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  .animate-draw-line {
+    stroke-dasharray: 100;
+    animation: drawLine 2s ease-out forwards;
+  }
+}

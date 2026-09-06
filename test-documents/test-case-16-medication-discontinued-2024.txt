@@ -1,0 +1,29 @@
+HOSPITAL A
+Department of Internal Medicine
+Patient Consultation Note
+
+Date: January 10, 2024
+Patient: Test Patient P
+DOB: 01/01/1980
+MRN: 45674567
+
+CHIEF COMPLAINT:
+Routine checkup
+
+HISTORY OF PRESENT ILLNESS:
+Patient presents for routine checkup. Reports feeling well. No recurrence of fatigue since Medication A was discontinued in 2023.
+
+PHYSICAL EXAMINATION:
+Vitals: BP 120/78, HR 74, Temp 98.5°F
+General: Well-developed, no acute distress
+
+ASSESSMENT:
+Healthy adult
+Fatigue resolved
+
+PLAN:
+1. No further treatment needed
+2. Follow-up as needed
+
+Physician: Dr. Smith
+Dictated: January 10, 2024

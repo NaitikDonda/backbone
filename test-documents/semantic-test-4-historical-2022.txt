@@ -1,0 +1,12 @@
+Date: November 20, 2022
+Patient: Test Patient
+
+Consultation Note
+
+Chief Complaint: Routine follow-up.
+
+History: Patient reports history of nausea in 2018. No current nausea symptoms. The nausea resolved after treatment in 2018 and has not recurred.
+
+Assessment: Historical nausea - resolved, no current symptoms.
+
+Plan: No intervention needed for nausea.

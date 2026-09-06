@@ -1,0 +1,32 @@
+SPECIALIST CLINIC
+Hematology Consultation
+
+Date: May 25, 2023
+Patient: Test Patient S
+DOB: 01/01/1980
+MRN: 78907890
+
+REFERRAL REASON:
+Fatigue - evaluation
+
+HISTORY:
+Patient presents with 2-month history of fatigue. Referred by primary care for hematologic evaluation.
+
+PHYSICAL EXAMINATION:
+Vitals: BP 118/75, HR 76, Temp 98.4°F
+General: Well-developed, no acute distress
+HEENT: Pale conjunctiva noted
+Cardiovascular: Regular rate and rhythm
+Abdomen: Soft, non-tender
+
+ASSESSMENT:
+Fatigue, under evaluation
+
+PLAN:
+1. Comprehensive iron studies
+2. Ferritin
+3. Vitamin B12, folate
+4. Follow-up in 4 weeks with results
+
+Physician: Dr. Hematologist
+Dictated: May 25, 2023

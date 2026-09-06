@@ -1,0 +1,33 @@
+SPECIALIST CLINIC
+Hematology Consultation
+
+Date: September 15, 2024
+Patient: Test Patient F
+DOB: 01/01/1980
+MRN: 44445555
+
+REFERRAL REASON:
+Fatigue and anemia - evaluation
+
+HISTORY:
+Patient presents with 3-year history of fatigue. Previous evaluations at Hospital A and Hospital B documented anemia. Patient reports no improvement despite previous treatments.
+
+PHYSICAL EXAMINATION:
+Vitals: BP 120/78, HR 74, Temp 98.5°F
+General: Well-developed, no acute distress
+HEENT: Pale conjunctiva noted
+Cardiovascular: Regular rate and rhythm
+Abdomen: Soft, non-tender
+
+ASSESSMENT:
+Chronic fatigue with persistent anemia
+
+PLAN:
+1. Comprehensive iron studies
+2. Ferritin
+3. Vitamin B12, folate
+4. Consider bone marrow biopsy if iron studies inconclusive
+5. Follow-up in 4 weeks
+
+Physician: Dr. Hematologist
+Dictated: September 15, 2024

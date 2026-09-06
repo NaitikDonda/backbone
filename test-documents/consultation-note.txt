@@ -1,0 +1,37 @@
+CONSULTATION NOTE
+Patient: Robert Chen
+Date: May 10, 2024
+Age: 50
+Sex: Male
+
+Chief Complaint: Persistent headaches for 2 years
+
+History of Present Illness:
+Patient reports headaches occurring 3-4 times per week for the past 2 years.
+Headaches are described as throbbing, located in the frontal region.
+Associated symptoms include nausea and sensitivity to light.
+Patient denies fever, neck stiffness, or visual changes.
+No history of seizures or head trauma.
+
+Review of Systems:
+- Constitutional: Denies fever, weight loss
+- Neurological: Denies weakness, numbness, tingling
+- Gastrointestinal: Denies nausea, vomiting (except with headaches)
+
+Physical Examination:
+General: Well-developed, well-nourished
+Neurological: Alert and oriented x3, cranial nerves intact
+No focal neurological deficits
+
+Assessment:
+Possible migraine headaches
+Rule out tension headaches
+Suspected tension-type headache
+
+Plan:
+MRI brain to rule out secondary causes
+Consider prophylactic medication
+Follow-up in 2 weeks
+
+Physician: Dr. Emily Davis
+Department: Neurology

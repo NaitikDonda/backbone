@@ -1,0 +1,28 @@
+HOSPITAL A
+Department of Internal Medicine
+Patient Consultation Note
+
+Date: March 15, 2021
+Patient: Test Patient I
+DOB: 01/01/1980
+MRN: 77778888
+
+CHIEF COMPLAINT:
+Headache
+
+HISTORY OF PRESENT ILLNESS:
+Patient presents with headache. Reports tension-type headache for several weeks. No other neurological symptoms.
+
+PHYSICAL EXAMINATION:
+Vitals: BP 120/80, HR 75, Temp 98.6°F
+Neurological: Alert and oriented x3, no focal deficits
+
+ASSESSMENT:
+Tension headache
+
+PLAN:
+1. Over-the-counter pain relief as needed
+2. Follow-up if symptoms worsen
+
+Physician: Dr. Smith
+Dictated: March 15, 2021

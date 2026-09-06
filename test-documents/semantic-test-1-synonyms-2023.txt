@@ -1,0 +1,12 @@
+Date: January 10, 2023
+Patient: Test Patient
+
+Consultation Note
+
+Chief Complaint: Patient reports fatigue.
+
+History: The patient describes ongoing fatigue. Previous documentation includes persistent tiredness in 2019 and low energy complaints in 2021.
+
+Assessment: Fatigue-related symptoms continue to be documented across multiple encounters.
+
+Plan: Evaluate for underlying causes and consider appropriate management.

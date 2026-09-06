@@ -1,0 +1,36 @@
+HOSPITAL A
+Department of Internal Medicine
+Patient Consultation Note
+
+Date: March 15, 2021
+Patient: Test Patient A
+DOB: 01/01/1980
+MRN: 12345678
+
+CHIEF COMPLAINT:
+Fatigue
+
+HISTORY OF PRESENT ILLNESS:
+Patient presents with persistent fatigue lasting 3 months. Reports feeling tired throughout the day, difficulty concentrating, and low energy levels. No significant weight changes or sleep disturbances noted.
+
+PHYSICAL EXAMINATION:
+Vitals: BP 120/80, HR 78, Temp 98.6°F
+General: Well-developed, well-nourished, no acute distress
+HEENT: Normal
+Cardiovascular: Regular rate and rhythm, no murmurs
+Respiratory: Clear to auscultation bilaterally
+Abdomen: Soft, non-tender, no masses
+Neurological: Alert and oriented x3
+
+ASSESSMENT:
+Fatigue, unspecified
+
+PLAN:
+1. CBC with differential
+2. TSH, free T4
+3. Vitamin B12, folate
+4. Ferritin
+5. Follow-up in 2 weeks with lab results
+
+Physician: Dr. Smith
+Dictated: March 15, 2021

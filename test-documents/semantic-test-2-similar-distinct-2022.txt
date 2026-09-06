@@ -1,0 +1,12 @@
+Date: August 15, 2022
+Patient: Test Patient
+
+Consultation Note
+
+Chief Complaint: Patient reports sleepiness.
+
+History: The patient describes feeling sleepy during the day, which is distinct from their previous fatigue complaints. This appears to be a separate issue related to sleep quality rather than energy levels.
+
+Assessment: Sleepiness documented as distinct from fatigue.
+
+Plan: Evaluate sleep patterns and consider sleep hygiene recommendations.

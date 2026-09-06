@@ -1,0 +1,20 @@
+HOSPITAL A
+Clinical Laboratory Report
+
+Date: March 15, 2023
+Patient: Test Patient D
+DOB: 01/01/1980
+MRN: 22223333
+
+COMPLETE BLOOD COUNT
+
+Test Result Reference Range
+Hemoglobin 10.5 g/dL 12.0-16.0 g/dL
+Hematocrit 31.5% 37.0-47.0%
+RBC Count 4.0 M/µL 4.2-5.4 M/µL
+
+INTERPRETATION:
+Mild anemia. Recommend follow-up in 3 months.
+
+Laboratory Director: Dr. Lab
+Reported: March 15, 2023

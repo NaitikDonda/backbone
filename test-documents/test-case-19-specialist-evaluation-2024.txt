@@ -1,0 +1,28 @@
+HOSPITAL A
+Department of Internal Medicine
+Patient Consultation Note
+
+Date: June 20, 2024
+Patient: Test Patient S
+DOB: 01/01/1980
+MRN: 78907890
+
+CHIEF COMPLAINT:
+Follow-up
+
+HISTORY OF PRESENT ILLNESS:
+Patient returns for follow-up after hematology evaluation. Specialist evaluation completed in 2023. Patient reports some improvement in fatigue after treatment initiated by specialist.
+
+PHYSICAL EXAMINATION:
+Vitals: BP 120/78, HR 74, Temp 98.5°F
+General: Well-developed, no acute distress
+
+ASSESSMENT:
+Fatigue, improved after specialist evaluation
+
+PLAN:
+1. Continue current treatment
+2. Follow-up as needed
+
+Physician: Dr. Smith
+Dictated: June 20, 2024

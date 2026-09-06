@@ -1,0 +1,28 @@
+CITY MEDICAL CENTER
+Patient: John Doe
+Age: 40
+Sex: Male
+Date: January 10, 2024
+
+CONSULTATION NOTE
+Chief Complaint: Fatigue and numbness continuing
+
+History of Present Illness:
+Patient reports fatigue and numbness in hands and feet continue. Symptoms have been present for over 2 years now.
+
+Current Medications: None
+
+Physical Examination:
+BP: 118/76 mmHg, HR: 70 bpm, Temp: 98.6°F
+Neurological exam: Sensory changes in extremities
+
+Assessment:
+1. Fatigue - chronic
+2. Numbness - chronic
+
+Plan:
+- Neurology referral recommended
+- Consider B12 supplementation
+
+Physician: Dr. Sarah Johnson
+Department: Internal Medicine

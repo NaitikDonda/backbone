@@ -1,0 +1,12 @@
+Date: February 5, 2020
+Patient: Test Patient
+
+Consultation Note
+
+Chief Complaint: Patient reports headache.
+
+History: The patient describes a persistent headache for the past several days.
+
+Assessment: Headache documented.
+
+Plan: Provide symptomatic relief and monitor.

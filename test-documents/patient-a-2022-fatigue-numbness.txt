@@ -1,0 +1,26 @@
+CITY MEDICAL CENTER
+Patient: John Doe
+Age: 38
+Sex: Male
+Date: February 15, 2022
+
+CONSULTATION NOTE
+Chief Complaint: Fatigue and numbness
+
+History of Present Illness:
+Patient reports persistent fatigue for the past year. Also reports numbness in hands and feet, particularly in the mornings. Symptoms appear together.
+
+Physical Examination:
+BP: 122/80 mmHg, HR: 74 bpm, Temp: 98.5°F
+Neurological exam: Mild sensory changes in extremities
+
+Assessment:
+1. Fatigue - present
+2. Numbness - present
+
+Plan:
+- Vitamin B12 level check
+- Follow-up in 3 months
+
+Physician: Dr. Sarah Johnson
+Department: Internal Medicine

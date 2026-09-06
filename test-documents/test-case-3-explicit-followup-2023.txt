@@ -1,0 +1,25 @@
+HOSPITAL A
+Clinical Laboratory Report
+
+Date: March 15, 2023
+Patient: Test Patient C
+DOB: 01/01/1980
+MRN: 11112222
+
+LIVER FUNCTION PANEL
+
+Test Result Reference Range
+ALT 85 U/L 7-52 U/L
+AST 78 U/L 10-40 U/L
+Alkaline Phosphatase 180 U/L 44-147 U/L
+Total Bilirubin 1.8 mg/dL 0.3-1.2 mg/dL
+Direct Bilirubin 0.9 mg/dL 0.0-0.4 mg/dL
+
+INTERPRETATION:
+Elevated liver enzymes. Pattern consistent with hepatocellular injury. Recommend repeat test after 3 months to monitor trend. Consider ultrasound if abnormalities persist.
+
+RECOMMENDATION:
+Repeat liver function panel in 3 months.
+
+Laboratory Director: Dr. Lab
+Reported: March 15, 2023

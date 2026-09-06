@@ -1,0 +1,12 @@
+Date: April 8, 2019
+Patient: Test Patient
+
+Laboratory Results
+
+Test: Vitamin B12
+Result: 180 pg/mL (Low)
+Reference Range: 200-900 pg/mL
+
+Assessment: Low Vitamin B12 level documented.
+
+Plan: Consider Vitamin B12 supplementation.

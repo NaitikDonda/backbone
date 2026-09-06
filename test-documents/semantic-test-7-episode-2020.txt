@@ -1,0 +1,12 @@
+Date: March 5, 2020
+Patient: Test Patient
+
+Consultation Note
+
+Chief Complaint: Patient reports dizziness.
+
+History: The patient describes episodes of dizziness over the past week.
+
+Assessment: Dizziness documented.
+
+Plan: Monitor symptoms and evaluate.

@@ -1,0 +1,28 @@
+HOSPITAL A
+Emergency Department
+Patient Consultation Note
+
+Date: March 15, 2021
+Patient: Test Patient F
+DOB: 01/01/1980
+MRN: 44445555
+
+CHIEF COMPLAINT:
+Fatigue
+
+HISTORY OF PRESENT ILLNESS:
+Patient presents with fatigue. Reports feeling tired for several weeks.
+
+PHYSICAL EXAMINATION:
+Vitals: BP 120/80, HR 75, Temp 98.6°F
+General: Well-developed, no acute distress
+
+ASSESSMENT:
+Fatigue, unspecified
+
+PLAN:
+1. CBC
+2. Discharge with follow-up
+
+Physician: Dr. ED
+Dictated: March 15, 2021

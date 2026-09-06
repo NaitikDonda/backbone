@@ -1,0 +1,30 @@
+HOSPITAL A
+Department of Internal Medicine
+Patient Consultation Note
+
+Date: April 20, 2023
+Patient: Test Patient L
+DOB: 01/01/1980
+MRN: 11112222
+
+CHIEF COMPLAINT:
+Follow-up for anemia
+
+HISTORY OF PRESENT ILLNESS:
+Patient presents for follow-up of low hemoglobin found on recent lab work. Reports no significant symptoms.
+
+PHYSICAL EXAMINATION:
+Vitals: BP 118/75, HR 76, Temp 98.4°F
+General: Well-developed, no acute distress
+HEENT: Pale conjunctiva noted
+
+ASSESSMENT:
+Anemia, follow-up
+
+PLAN:
+1. Repeat CBC
+2. Iron studies
+3. Consider iron supplementation
+
+Physician: Dr. Smith
+Dictated: April 20, 2023

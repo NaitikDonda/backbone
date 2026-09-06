@@ -1,0 +1,8 @@
+Prescription Record
+Date: June 15, 2023
+
+Medication: Metformin 500mg
+Dosage: Twice daily
+Indication: Type 2 Diabetes
+
+No other medications prescribed.

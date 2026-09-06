@@ -1,0 +1,53 @@
+HOSPITAL A
+Department of Internal Medicine
+Discharge Summary
+
+Date: March 15, 2023
+Patient: Test Patient M
+DOB: 01/01/1980
+MRN: 12341234
+
+ADMISSION DATE: March 10, 2023
+DISCHARGE DATE: March 15, 2023
+
+CHIEF COMPLAINT:
+Fatigue and weakness
+
+HISTORY OF PRESENT ILLNESS:
+Patient presented with fatigue and weakness. Reports feeling tired for several weeks. Fatigue has been affecting daily activities. Patient also reports low energy levels throughout the day.
+
+PHYSICAL EXAMINATION ON ADMISSION:
+Vitals: BP 120/80, HR 75, Temp 98.6°F
+General: Well-developed, no acute distress
+HEENT: Pale conjunctiva noted
+Cardiovascular: Regular rate and rhythm
+Respiratory: Clear to auscultation
+Abdomen: Soft, non-tender
+
+HOSPITAL COURSE:
+Patient was admitted for evaluation of fatigue. Comprehensive workup was performed including CBC, CMP, iron studies, vitamin B12, folate, and TSH.
+
+LABORATORY RESULTS:
+Hemoglobin: 9.4 g/dL (low)
+Hematocrit: 28.5% (low)
+MCV: 75.0 fL (low)
+Ferritin: 8 ng/mL (low)
+Vitamin B12: 450 pg/mL (normal)
+Folate: 12 ng/mL (normal)
+TSH: 2.5 mIU/L (normal)
+
+DIAGNOSIS:
+1. Iron deficiency anemia
+2. Fatigue
+
+TREATMENT:
+1. Iron supplementation started
+2. Fatigue management with rest and hydration
+
+DISCHARGE PLAN:
+1. Continue iron supplementation
+2. Follow-up with primary care in 2 weeks
+3. Repeat CBC in 4 weeks
+
+ATTENDING PHYSICIAN: Dr. Smith
+DICTATED: March 15, 2023

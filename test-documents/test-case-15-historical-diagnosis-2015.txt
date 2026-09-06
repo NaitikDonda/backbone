@@ -1,0 +1,29 @@
+HOSPITAL A
+Department of Internal Medicine
+Patient Consultation Note
+
+Date: March 15, 2015
+Patient: Test Patient O
+DOB: 01/01/1980
+MRN: 34563456
+
+CHIEF COMPLAINT:
+Follow-up
+
+HISTORY OF PRESENT ILLNESS:
+Patient presents for follow-up of Condition A. Condition was diagnosed in 2014 and treated successfully. Patient reports no ongoing symptoms.
+
+PHYSICAL EXAMINATION:
+Vitals: BP 120/80, HR 75, Temp 98.6°F
+General: Well-developed, no acute distress
+
+ASSESSMENT:
+Condition A - resolved
+
+PLAN:
+1. Continue monitoring
+2. No further treatment needed
+3. Follow-up as needed
+
+Physician: Dr. Smith
+Dictated: March 15, 2015

@@ -1,0 +1,35 @@
+DISCHARGE SUMMARY
+Patient: Maria Garcia
+Date of Admission: June 1, 2024
+Date of Discharge: June 5, 2024
+Age: 62
+Sex: Female
+
+Admitting Diagnosis: Suspected pneumonia
+Final Diagnosis: Community-acquired pneumonia, resolved
+
+Hospital Course:
+Patient admitted with fever, cough, and shortness of breath.
+Chest X-ray showed right lower lobe consolidation.
+Started on IV antibiotics (Ceftriaxone 2g daily).
+Patient improved over 4 days.
+Fever resolved on day 2.
+Cough improved significantly by day 4.
+
+Procedures:
+1. Chest X-ray - June 1, 2024
+   Finding: Right lower lobe consolidation consistent with pneumonia
+   
+2. Blood cultures - June 1, 2024
+   Result: No growth
+
+Discharge Medications:
+1. Azithromycin 500mg daily for 5 days
+2. Acetaminophen 500mg as needed for fever
+
+Follow-up:
+Follow-up with primary care physician in 1 week.
+Repeat chest X-ray in 2 weeks if symptoms persist.
+
+Attending Physician: Dr. James Wilson
+Department: Internal Medicine

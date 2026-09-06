@@ -1,0 +1,11 @@
+Consultation Note
+Date: January 15, 2020
+Patient reports dizziness.
+
+Consultation Note
+Date: June 20, 2021
+Patient reports dizziness resolved. No further symptoms.
+
+Consultation Note
+Date: March 10, 2024
+Patient reports new onset of dizziness.

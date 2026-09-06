@@ -1,0 +1,12 @@
+Date: March 15, 2019
+Patient: Test Patient
+
+Consultation Note
+
+Chief Complaint: Patient reports persistent tiredness.
+
+History: The patient describes feeling unusually tired for the past several weeks. No other significant symptoms reported.
+
+Assessment: Fatigue-related symptoms documented.
+
+Plan: Monitor symptoms and follow up as needed.

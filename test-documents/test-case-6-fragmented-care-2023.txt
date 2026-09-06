@@ -1,0 +1,29 @@
+HOSPITAL B
+Department of Internal Medicine
+Patient Consultation Note
+
+Date: July 10, 2023
+Patient: Test Patient F
+DOB: 01/01/1980
+MRN: 44445555
+
+CHIEF COMPLAINT:
+Fatigue
+
+HISTORY OF PRESENT ILLNESS:
+Patient presents with ongoing fatigue. Reports symptoms for 2 years. Previous evaluations at Hospital A showed anemia.
+
+PHYSICAL EXAMINATION:
+Vitals: BP 118/75, HR 76, Temp 98.4°F
+General: Well-developed, no acute distress
+
+ASSESSMENT:
+Fatigue, anemia
+
+PLAN:
+1. Repeat CBC
+2. Iron studies
+3. Consider GI evaluation
+
+Physician: Dr. HospitalB
+Dictated: July 10, 2023

@@ -1,0 +1,19 @@
+HOSPITAL A
+Clinical Laboratory Report
+
+Date: August 15, 2022
+Patient: Test Patient F
+DOB: 01/01/1980
+MRN: 44445555
+
+COMPLETE BLOOD COUNT
+
+Test Result Reference Range
+Hemoglobin 9.5 g/dL 12.0-16.0 g/dL
+Hematocrit 28.8% 37.0-47.0%
+
+INTERPRETATION:
+Low hemoglobin. Recommend follow-up.
+
+Laboratory Director: Dr. Lab
+Reported: August 15, 2022

@@ -1,0 +1,35 @@
+HOSPITAL A
+Department of Internal Medicine
+Patient Consultation Note
+
+Date: July 20, 2022
+Patient: Test Patient A
+DOB: 01/01/1980
+MRN: 12345678
+
+CHIEF COMPLAINT:
+Fatigue
+
+HISTORY OF PRESENT ILLNESS:
+Patient returns with ongoing fatigue. Reports symptoms have persisted since last visit. Still experiencing low energy, difficulty with daily activities. No new symptoms.
+
+PHYSICAL EXAMINATION:
+Vitals: BP 118/75, HR 76, Temp 98.4°F
+General: Well-developed, no acute distress
+HEENT: Normal
+Cardiovascular: Regular rate and rhythm
+Respiratory: Clear to auscultation
+Abdomen: Soft, non-tender
+Neurological: Alert and oriented x3
+
+ASSESSMENT:
+Fatigue, persistent
+
+PLAN:
+1. Repeat CBC
+2. Comprehensive metabolic panel
+3. Consider sleep study referral
+4. Follow-up in 4 weeks
+
+Physician: Dr. Smith
+Dictated: July 20, 2022

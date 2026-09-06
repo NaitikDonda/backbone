@@ -1,0 +1,12 @@
+Date: September 15, 2021
+Patient: Test Patient
+
+Laboratory Results
+
+Test: B12
+Result: 195 pg/mL (Low)
+Reference Range: 200-900 pg/mL
+
+Assessment: Low B12 level documented.
+
+Plan: Continue Vitamin B12 supplementation and recheck.

@@ -1,0 +1,19 @@
+METROPOLITAN LABORATORY SERVICES
+Patient: John Doe
+DOB: January 15, 1984
+Date: June 20, 2020
+Patient ID: 12345678
+
+COMPLETE BLOOD COUNT (CBC)
+Hemoglobin: 14.2 g/dL (Reference: 13.5-17.5 g/dL)
+Hematocrit: 42% (Reference: 40-50%)
+WBC: 6,800/μL (Reference: 4,500-11,000/μL)
+Platelets: 245,000/μL (Reference: 150,000-400,000/μL)
+
+LIPID PANEL
+Total Cholesterol: 195 mg/dL (Reference: <200 mg/dL)
+LDL: 125 mg/dL (Reference: <100 mg/dL)
+HDL: 50 mg/dL (Reference: >40 mg/dL)
+Triglycerides: 140 mg/dL (Reference: <150 mg/dL)
+
+All values within normal range.

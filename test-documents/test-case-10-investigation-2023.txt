@@ -1,0 +1,24 @@
+HOSPITAL A
+Radiology Report
+
+Date: May 10, 2023
+Patient: Test Patient J
+DOB: 01/01/1980
+MRN: 88889999
+
+EXAMINATION: MRI of Brain with and without contrast
+
+INDICATION:
+Headache, rule out intracranial pathology
+
+FINDINGS:
+There is a small enhancing lesion in the left frontal lobe measuring approximately 8mm. The lesion demonstrates mild surrounding edema. No midline shift. No other intracranial abnormalities identified.
+
+IMPRESSION:
+Small enhancing lesion in left frontal lobe. Abnormal finding. Recommend clinical correlation and follow-up imaging.
+
+RECOMMENDATION:
+Follow-up MRI in 3 months to assess for change.
+
+Radiologist: Dr. Radiologist
+Reported: May 10, 2023

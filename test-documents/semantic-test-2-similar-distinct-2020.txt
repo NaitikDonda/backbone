@@ -1,0 +1,12 @@
+Date: May 10, 2020
+Patient: Test Patient
+
+Consultation Note
+
+Chief Complaint: Patient reports fatigue.
+
+History: The patient describes feeling tired and lacking energy.
+
+Assessment: Fatigue documented.
+
+Plan: Monitor symptoms.

@@ -1,0 +1,29 @@
+HOSPITAL A
+Department of Internal Medicine
+Patient Consultation Note
+
+Date: January 15, 2023
+Patient: Test Patient H
+DOB: 01/01/1980
+MRN: 66667777
+
+CHIEF COMPLAINT:
+Routine checkup
+
+HISTORY OF PRESENT ILLNESS:
+Patient presents for annual physical examination. No acute complaints. Feeling well.
+
+PHYSICAL EXAMINATION:
+Vitals: BP 118/75, HR 72, Temp 98.4°F
+General: Well-developed, well-nourished
+All systems within normal limits
+
+ASSESSMENT:
+Healthy adult
+
+PLAN:
+1. Routine screening labs
+2. Follow-up as needed
+
+Physician: Dr. Smith
+Dictated: January 15, 2023

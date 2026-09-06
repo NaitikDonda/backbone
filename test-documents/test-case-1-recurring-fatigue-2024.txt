@@ -1,0 +1,35 @@
+HOSPITAL A
+Department of Internal Medicine
+Patient Consultation Note
+
+Date: January 10, 2024
+Patient: Test Patient A
+DOB: 01/01/1980
+MRN: 12345678
+
+CHIEF COMPLAINT:
+Fatigue
+
+HISTORY OF PRESENT ILLNESS:
+Patient presents with continued fatigue. Reports ongoing symptoms for several years. Fatigue affects daily activities and work performance. No significant improvement despite previous evaluations.
+
+PHYSICAL EXAMINATION:
+Vitals: BP 122/78, HR 74, Temp 98.5°F
+General: Well-developed, no acute distress
+HEENT: Normal
+Cardiovascular: Regular rate and rhythm
+Respiratory: Clear to auscultation
+Abdomen: Soft, non-tender
+Neurological: Alert and oriented x3
+
+ASSESSMENT:
+Fatigue, chronic
+
+PLAN:
+1. Referral to endocrinology
+2. Referral to rheumatology
+3. Consider hematology referral
+4. Follow-up in 6 weeks
+
+Physician: Dr. Smith
+Dictated: January 10, 2024

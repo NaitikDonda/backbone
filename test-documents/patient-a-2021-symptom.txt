@@ -1,0 +1,29 @@
+CITY MEDICAL CENTER
+Patient: John Doe
+Age: 37
+Sex: Male
+Date: March 10, 2021
+
+CONSULTATION NOTE
+Chief Complaint: Fatigue
+
+History of Present Illness:
+Patient reports increasing fatigue over the past 3 months. Fatigue is described as persistent, affecting daily activities. No significant weight changes. Denies fever, night sweats.
+
+Current Medications: None
+
+Physical Examination:
+BP: 118/78 mmHg, HR: 70 bpm, Temp: 98.4°F
+General appearance: Mildly fatigued appearance
+
+Assessment:
+1. Fatigue - present, etiology unclear
+2. No acute findings
+
+Plan:
+- Basic metabolic panel
+- Thyroid function tests
+- Follow-up in 2 weeks with lab results
+
+Physician: Dr. Sarah Johnson
+Department: Internal Medicine

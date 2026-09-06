@@ -1,0 +1,28 @@
+HOSPITAL A
+Department of Internal Medicine
+Patient Consultation Note
+
+Date: September 15, 2024
+Patient: Test Patient I
+DOB: 01/01/1980
+MRN: 77778888
+
+CHIEF COMPLAINT:
+Headache
+
+HISTORY OF PRESENT ILLNESS:
+Patient returns with headache. Reports ongoing tension-type headaches for several years. Symptoms similar to previous visits. No new neurological symptoms.
+
+PHYSICAL EXAMINATION:
+Vitals: BP 122/78, HR 74, Temp 98.5°F
+Neurological: Alert and oriented x3, no focal deficits
+
+ASSESSMENT:
+Tension headache, chronic
+
+PLAN:
+1. Continue current treatment
+2. Follow-up as needed
+
+Physician: Dr. Smith
+Dictated: September 15, 2024

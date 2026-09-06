@@ -1,0 +1,30 @@
+PRESCRIPTION
+Patient: Jane Smith
+Date: April 2, 2024
+Age: 35
+Sex: Female
+
+Medications:
+1. Vitamin B12
+   Dosage: 500 mcg
+   Frequency: Once daily
+   Route: Oral
+   Duration: 3 months
+
+2. Ferrous Sulfate
+   Dosage: 325 mg
+   Frequency: Twice daily
+   Route: Oral
+   Duration: 6 months
+
+3. Folic Acid
+   Dosage: 1 mg
+   Frequency: Once daily
+   Route: Oral
+   Duration: 3 months
+
+Instructions: Take with food to reduce stomach upset.
+Follow-up appointment in 3 months.
+
+Physician: Dr. Michael Johnson
+Department: Internal Medicine

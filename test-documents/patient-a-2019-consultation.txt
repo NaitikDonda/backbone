@@ -1,0 +1,26 @@
+CITY MEDICAL CENTER
+Patient: John Doe
+Age: 35
+Sex: Male
+Date: January 15, 2019
+
+CONSULTATION NOTE
+Chief Complaint: Occasional headaches
+
+History of Present Illness:
+Patient reports experiencing headaches approximately once per month for the past 6 months. Headaches are described as mild, bilateral, without nausea or visual changes. Denies fever, neck stiffness.
+
+Physical Examination:
+BP: 120/80 mmHg, HR: 72 bpm, Temp: 98.6°F
+Neurological exam: Normal
+
+Assessment:
+1. Tension headaches - suspected
+2. No significant findings
+
+Plan:
+- Monitor symptoms
+- Follow-up in 6 months if symptoms worsen
+
+Physician: Dr. Sarah Johnson
+Department: Internal Medicine

@@ -1,0 +1,25 @@
+HOSPITAL A
+Clinical Laboratory Report
+
+Date: February 20, 2024
+Patient: Test Patient B
+DOB: 01/01/1980
+MRN: 87654321
+
+COMPLETE BLOOD COUNT (CBC)
+
+Test Result Reference Range
+Hemoglobin 9.3 g/dL 12.0-16.0 g/dL
+Hematocrit 28.0% 37.0-47.0%
+RBC Count 3.75 M/µL 4.2-5.4 M/µL
+MCV 74.8 fL 80.0-100.0 fL
+MCH 24.8 pg 27.0-33.0 pg
+MCHC 33.2 g/dL 32.0-36.0 g/dL
+WBC Count 6.6 K/µL 4.5-11.0 K/µL
+Platelet Count 252 K/µL 150-400 K/µL
+
+INTERPRETATION:
+Hemoglobin remains low. Persistent microcytic anemia. Recommend gastroenterology evaluation for potential GI blood loss.
+
+Laboratory Director: Dr. Lab
+Reported: February 20, 2024

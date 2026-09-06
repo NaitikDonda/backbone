@@ -1,0 +1,25 @@
+HOSPITAL A
+Clinical Laboratory Report
+
+Date: May 10, 2021
+Patient: Test Patient B
+DOB: 01/01/1980
+MRN: 87654321
+
+COMPLETE BLOOD COUNT (CBC)
+
+Test Result Reference Range
+Hemoglobin 9.4 g/dL 12.0-16.0 g/dL
+Hematocrit 28.5% 37.0-47.0%
+RBC Count 3.8 M/µL 4.2-5.4 M/µL
+MCV 75.0 fL 80.0-100.0 fL
+MCH 24.7 pg 27.0-33.0 pg
+MCHC 33.0 g/dL 32.0-36.0 g/dL
+WBC Count 6.5 K/µL 4.5-11.0 K/µL
+Platelet Count 250 K/µL 150-400 K/µL
+
+INTERPRETATION:
+Low hemoglobin consistent with anemia. Microcytic indices suggest iron deficiency anemia. Recommend iron studies and ferritin.
+
+Laboratory Director: Dr. Lab
+Reported: May 10, 2021

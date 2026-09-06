@@ -1,0 +1,12 @@
+Date: February 10, 2022
+Patient: Test Patient
+
+Consultation Note
+
+Chief Complaint: Patient reports dizziness.
+
+History: Patient reports new onset of dizziness, distinct from the 2020 episode which resolved after treatment in late 2020. This represents a new episode.
+
+Assessment: New dizziness episode - separate from 2020 episode.
+
+Plan: Evaluate as new presentation.

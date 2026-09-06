@@ -1,0 +1,220 @@
+SYNTHETIC PATIENT - 7 YEAR HEALTH JOURNEY TEST CASE
+================================================
+
+This document represents a synthetic 7-year patient history designed to test
+the longitudinal health journey reconstruction system.
+
+PATIENT: Synthetic Test Patient
+YEARS: 2019-2025
+
+YEAR 1 (2019) - INITIAL SYMPTOM
+-----------------------------
+Date: 2019-03-15
+Document Type: Consultation Note
+Chief Complaint: Fatigue
+History: Patient reports 3 months of persistent fatigue. No other symptoms reported.
+Physical Exam: Normal.
+Assessment: Fatigue - etiology unknown.
+Plan: Basic laboratory workup ordered.
+
+Date: 2019-03-20
+Document Type: Lab Report
+CBC: Normal
+CMP: Normal
+TSH: Normal
+Iron Studies: Normal
+Note: All baseline laboratory results within normal limits.
+
+YEAR 2 (2020) - REPEAT SYMPTOM + LABORATORY INVESTIGATION
+------------------------------------------------------
+Date: 2020-04-10
+Document Type: Consultation Note
+Chief Complaint: Recurring fatigue
+History: Fatigue persists from last year. Patient reports worsening over past 2 months.
+Physical Exam: Mild pallor noted.
+Assessment: Persistent fatigue - requires further investigation.
+Plan: Repeat laboratory workup, consider B12 and folate levels.
+
+Date: 2020-04-15
+Document Type: Lab Report
+CBC: Normal
+CMP: Normal
+TSH: Normal
+Vitamin B12: 180 pg/mL (LOW - reference range 200-900)
+Folate: Normal
+Note: Low Vitamin B12 level detected.
+
+Date: 2020-05-01
+Document Type: Consultation Note
+History: B12 deficiency identified. Patient started on oral B12 supplements.
+Assessment: Vitamin B12 deficiency.
+Plan: Continue B12 supplementation, repeat levels in 3 months.
+
+YEAR 3 (2021) - NEW SYMPTOM
+---------------------------
+Date: 2021-06-20
+Document Type: Consultation Note
+Chief Complaint: Fatigue AND numbness
+History: Fatigue persists despite B12 supplementation. Patient reports new onset of numbness in hands and feet over past 2 months.
+Physical Exam: Decreased sensation in bilateral lower extremities.
+Assessment: Peripheral neuropathy - possible B12 deficiency related.
+Plan: Neurology referral, repeat B12 levels.
+
+Date: 2021-07-10
+Document Type: Lab Report
+Vitamin B12: 220 pg/mL (within normal range)
+Note: B12 levels have normalized with supplementation.
+
+Date: 2021-08-15
+Document Type: Consultation Note (Neurology)
+History: Patient with persistent numbness despite normalized B12.
+Assessment: Peripheral neuropathy - etiology unclear, consider other causes.
+Plan: EMG/NCS studies, consider additional laboratory workup.
+
+Date: 2021-09-01
+Document Type: Procedure Report
+EMG/NCS: Mild sensory neuropathy in lower extremities.
+Note: Findings consistent with mild peripheral neuropathy.
+
+YEAR 4 (2022) - TREATMENT DOCUMENTED
+------------------------------------
+Date: 2022-01-15
+Document Type: Consultation Note
+History: Numbness persists. Patient reports symptoms stable.
+Assessment: Peripheral neuropathy - stable.
+Plan: Continue current management, consider gabapentin for symptom control.
+
+Date: 2022-02-01
+Document Type: Prescription
+Medication: Gabapentin 300mg daily
+Note: Started for neuropathic pain control.
+
+Date: 2022-06-20
+Document Type: Consultation Note
+History: Patient reports some improvement in numbness with gabapentin.
+Assessment: Peripheral neuropathy - improving with treatment.
+Plan: Continue gabapentin, follow up in 6 months.
+
+Date: 2022-12-15
+Document Type: Consultation Note
+History: Patient reports significant improvement. Numbness minimal.
+Assessment: Peripheral neuropathy - resolved with treatment.
+Plan: Continue gabapentin, consider tapering if symptoms remain controlled.
+
+YEAR 5 (2023) - RECURRING SYMPTOM
+----------------------------------
+Date: 2023-03-10
+Document Type: Consultation Note
+Chief Complaint: Fatigue returned
+History: After 6 months of minimal symptoms, fatigue has returned. Patient reports fatigue similar to initial presentation.
+Physical Exam: Normal.
+Assessment: Recurrent fatigue - etiology unclear.
+Plan: Laboratory workup to evaluate for recurrence of B12 deficiency.
+
+Date: 2023-03-15
+Document Type: Lab Report
+Vitamin B12: 350 pg/mL (normal)
+Iron Studies: Normal
+TSH: Normal
+Note: All laboratory results normal. No recurrence of B12 deficiency.
+
+Date: 2023-04-20
+Document Type: Consultation Note
+History: Fatigue persists despite normal laboratory results.
+Assessment: Fatigue of unknown etiology - consider other causes.
+Plan: Sleep study referral, consider depression screening.
+
+YEAR 6 (2024) - REPEAT LABORATORY FINDING
+------------------------------------------
+Date: 2024-05-15
+Document Type: Consultation Note
+History: Fatigue continues. Patient reports intermittent symptoms.
+Assessment: Persistent fatigue - ongoing evaluation.
+Plan: Repeat laboratory workup, consider additional testing.
+
+Date: 2024-05-20
+Document Type: Lab Report
+CBC: Normal
+CMP: Normal
+TSH: Normal
+Vitamin B12: 280 pg/mL (normal)
+Iron Studies: Normal
+Note: All laboratory results remain normal.
+
+Date: 2024-08-10
+Document Type: Consultation Note
+History: No significant change in symptoms.
+Assessment: Fatigue - stable, etiology remains unclear.
+Plan: Continue monitoring, consider referral to specialist if symptoms worsen.
+
+YEAR 7 (2025) - SPECIALIST CONSULTATION
+--------------------------------------
+Date: 2025-02-15
+Document Type: Consultation Note (Specialist)
+History: 6-year history of recurrent fatigue with episodes of peripheral neuropathy. Previous B12 deficiency treated and resolved. Current fatigue persists despite normal laboratory evaluation.
+Physical Exam: Normal.
+Assessment: Chronic fatigue syndrome - consider as diagnosis of exclusion.
+Plan: Comprehensive evaluation, exclude other causes, consider multidisciplinary approach.
+
+Date: 2025-03-01
+Document Type: Lab Report
+Comprehensive metabolic panel: Normal
+CBC: Normal
+ESR: Normal
+CRP: Normal
+ANA: Negative
+Note: No evidence of inflammatory or autoimmune disease.
+
+Date: 2025-04-15
+Document Type: Consultation Note
+History: Comprehensive evaluation negative for organic causes.
+Assessment: Chronic fatigue syndrome - diagnosis of exclusion.
+Plan: Symptom management, referral to fatigue clinic, consider cognitive behavioral therapy.
+
+CONFLICTING RECORD (for testing conflict detection)
+-------------------------------------------------
+Date: 2024-06-01
+Document Type: Consultation Note
+History: Patient denies fatigue.
+Assessment: No active symptoms.
+Note: This conflicts with other records from 2024 documenting ongoing fatigue.
+
+MISSING PERIOD (for testing missing period detection)
+--------------------------------------------------
+Note: No records available for period 2022-07-01 to 2022-11-30 (5 months)
+This represents a gap in documentation.
+
+EXPECTED JOURNEY STRUCTURE:
+---------------------------
+1. Episode 1 (2019-2020): Initial fatigue episode
+2. Episode 2 (2020): B12 deficiency investigation
+3. Episode 3 (2021): Neurological symptoms emerge
+4. Episode 4 (2022): Treatment and resolution
+5. Episode 5 (2023-2025): Recurring fatigue
+
+EXPECTED THEMES:
+---------------
+- Recurring fatigue (appears across multiple episodes)
+- Peripheral neuropathy (episodes 3-4)
+
+EXPECTED OPEN THREADS:
+---------------------
+- Recurring fatigue without clear etiology
+- Fatigue persists despite normal laboratory findings
+
+EXPECTED TRANSITIONS:
+---------------------
+- New symptom (numbness appears in 2021)
+- Investigation (laboratory workup in 2020, 2023, 2024)
+- Treatment (gabapentin in 2022)
+- Resolution (neuropathy resolved in 2022)
+- Recurrence (fatigue returns in 2023)
+
+EXPECTED CONFLICTS:
+-------------------
+- Conflicting symptom reports in 2024
+
+EXPECTED CARE GAPS:
+-------------------
+- Sleep study referral in 2023 (no follow-up documented)
+- Fatigue clinic referral in 2025 (no follow-up documented yet)

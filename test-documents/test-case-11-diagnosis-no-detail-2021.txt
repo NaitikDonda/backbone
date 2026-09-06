@@ -1,0 +1,28 @@
+HOSPITAL A
+Department of Internal Medicine
+Patient Consultation Note
+
+Date: March 15, 2021
+Patient: Test Patient K
+DOB: 01/01/1980
+MRN: 99990000
+
+CHIEF COMPLAINT:
+Follow-up
+
+HISTORY OF PRESENT ILLNESS:
+Patient presents for follow-up of chronic condition.
+
+PHYSICAL EXAMINATION:
+Vitals: BP 120/80, HR 75, Temp 98.6°F
+General: Well-developed, no acute distress
+
+ASSESSMENT:
+Condition A - chronic
+
+PLAN:
+1. Continue current treatment
+2. Follow-up in 6 months
+
+Physician: Dr. Smith
+Dictated: March 15, 2021

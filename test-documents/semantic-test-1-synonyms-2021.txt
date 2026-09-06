@@ -1,0 +1,12 @@
+Date: July 20, 2021
+Patient: Test Patient
+
+Consultation Note
+
+Chief Complaint: Patient complains of low energy.
+
+History: The patient reports experiencing low energy levels in recent weeks. Previous episodes of tiredness were noted in 2019.
+
+Assessment: Energy-related symptoms persist.
+
+Plan: Continue monitoring and consider further evaluation if symptoms worsen.

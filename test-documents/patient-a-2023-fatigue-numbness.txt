@@ -1,0 +1,28 @@
+CITY MEDICAL CENTER
+Patient: John Doe
+Age: 39
+Sex: Male
+Date: March 20, 2023
+
+CONSULTATION NOTE
+Chief Complaint: Persistent fatigue and numbness
+
+History of Present Illness:
+Patient reports ongoing fatigue and numbness in extremities. Symptoms similar to previous visit. No improvement noted.
+
+Current Medications: None
+
+Physical Examination:
+BP: 120/78 mmHg, HR: 72 bpm, Temp: 98.4°F
+Neurological exam: Sensory changes persist
+
+Assessment:
+1. Fatigue - ongoing
+2. Numbness - ongoing
+
+Plan:
+- Repeat Vitamin B12 level
+- Consider neurology referral
+
+Physician: Dr. Sarah Johnson
+Department: Internal Medicine
