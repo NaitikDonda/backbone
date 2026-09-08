@@ -396,14 +396,16 @@ export interface ExtractedSymptom {
   severity: string | null;
   certainty: 'present' | 'absent' | 'possible' | 'suspected' | 'denied';
   status: string | null;
+  datePrecision?: 'exact' | 'approximate' | 'year_only' | 'unknown';
   sourceText: string;
 }
 
 export interface ExtractedDiagnosis {
   name: string;
   date: string | null;
-  status: 'active' | 'historical' | 'resolved' | 'suspected' | 'possible' | 'ruled_out';
+  status: 'active' | 'historical' | 'resolved' | 'suspected' | 'possible' | 'ruled_out' | 'ongoing' | 'chronic';
   certainty: 'confirmed' | 'suspected' | 'possible' | 'ruled_out';
+  datePrecision?: 'exact' | 'approximate' | 'year_only' | 'unknown';
   sourceText: string;
 }
 
@@ -414,7 +416,9 @@ export interface ExtractedLabResult {
   referenceRange: string | null;
   isAbnormal: boolean | null;
   date: string | null;
+  datePrecision?: 'exact' | 'approximate' | 'year_only' | 'unknown';
   sourceText: string;
+  validated?: boolean; // Flag to indicate if test/value/unit match was validated
 }
 
 export interface ExtractedMedication {
@@ -425,6 +429,7 @@ export interface ExtractedMedication {
   startDate: string | null;
   endDate: string | null;
   duration: string | null;
+  status?: 'active' | 'discontinued' | 'completed' | 'ongoing';
   sourceText: string;
 }
 
@@ -433,6 +438,55 @@ export interface ExtractedProcedure {
   date: string | null;
   result: string | null;
   finding: string | null;
+  status?: 'completed' | 'planned' | 'ongoing' | 'resolved';
+  datePrecision?: 'exact' | 'approximate' | 'year_only' | 'unknown';
+  sourceText: string;
+}
+
+export interface ExtractedAllergy {
+  name: string;
+  severity: string | null;
+  reaction: string | null;
+  status: 'active' | 'resolved' | 'historical';
+  sourceText: string;
+}
+
+export interface ExtractedReferral {
+  specialty: string;
+  reason: string | null;
+  date: string | null;
+  status: 'pending' | 'completed' | 'unknown';
+  sourceText: string;
+}
+
+export interface ExtractedFollowUp {
+  type: string;
+  reason: string | null;
+  date: string | null;
+  status: 'pending' | 'completed' | 'unknown';
+  sourceText: string;
+}
+
+export interface ExtractedInvestigationPlan {
+  testName: string;
+  reason: string | null;
+  plannedDate: string | null;
+  status: 'planned' | 'completed' | 'unknown';
+  sourceText: string;
+}
+
+export interface ExtractedOutcome {
+  description: string;
+  category: 'procedure_outcome' | 'treatment_response' | 'resolution_status' | 'other';
+  date: string | null;
+  sourceText: string;
+}
+
+export interface ExtractedMedicalHistory {
+  condition: string;
+  type: 'condition' | 'surgery' | 'hospitalization' | 'other';
+  date: string | null;
+  status: string | null;
   sourceText: string;
 }
 
@@ -445,6 +499,12 @@ export interface StructuredExtraction {
   medications: ExtractedMedication[];
   procedures: ExtractedProcedure[];
   findings: string[];
+  allergies: ExtractedAllergy[];
+  referrals: ExtractedReferral[];
+  followUps: ExtractedFollowUp[];
+  investigationPlans: ExtractedInvestigationPlan[];
+  outcomes: ExtractedOutcome[];
+  medicalHistory: ExtractedMedicalHistory[];
   sourceRecordId: string;
   extractedAt: string;
 }

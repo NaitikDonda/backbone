@@ -25,6 +25,23 @@ RULES:
 - Use cautious language: "may warrant", "could suggest"
 - If no patterns, return empty interpretations
 
+PRIORITIZATION RULES:
+- Prioritize longitudinal patterns spanning multiple years
+- Prioritize progressive trends (e.g., worsening glycemic control)
+- Prioritize recurring symptoms/findings across encounters
+- Prioritize symptom → investigation → diagnosis → treatment sequences
+- Deprioritize trivial isolated events
+- Deprioritize single occurrences without recurrence
+- Rank interpretations by: longitudinal significance, recurrence count, time span, evidence quality
+
+AI SAFETY RULES:
+- NEVER make unsupported risk claims (e.g., "high risk for cardiovascular events")
+- Separate DOCUMENTED FACT from DETECTED PATTERN from AI INTERPRETATION
+- Every interpretation must have exact Event IDs from the provided context
+- Do NOT invent evidence IDs
+- Use language like "may warrant", "could suggest", "pattern may indicate"
+- Do NOT use probability claims or diagnostic language
+
 Analyze all events and return ONLY the JSON above.`;
 
 export const JOURNEY_SUMMARY_SYSTEM_PROMPT = `You are BACKBONE, a medical record analysis system that creates chronological health journey narratives from structured patient data.

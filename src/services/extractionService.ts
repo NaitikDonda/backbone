@@ -1,4 +1,6 @@
 import type { StructuredExtraction } from '../types';
+import { labValidationService } from './labValidationService';
+import { dateValidationService } from './dateValidationService';
 
 export interface ExtractionError {
   message: string;
@@ -8,11 +10,9 @@ export interface ExtractionError {
 export class ExtractionService {
   private static instance: ExtractionService;
   private ollamaBaseUrl: string;
-  private model: string;
 
   private constructor() {
     this.ollamaBaseUrl = 'http://localhost:11434';
-    this.model = 'llama3.2';
   }
 
   static getInstance(): ExtractionService {
@@ -34,8 +34,8 @@ export class ExtractionService {
       } as ExtractionError;
     }
 
-    // Truncate text if too large for reliable Ollama JSON generation
-    const MAX_TEXT_LENGTH = 8000; // Reduced for faster processing
+    // Increase text limit for better extraction completeness
+    const MAX_TEXT_LENGTH = 20000; // Increased from 8000 to capture more information
     let textToProcess = text;
     if (text.length > MAX_TEXT_LENGTH) {
       console.log(`[ExtractionService] Text too long (${text.length} chars), truncating to ${MAX_TEXT_LENGTH}`);
@@ -67,21 +67,30 @@ Extract these categories if present:
 - Encounter info (date, type, facility, department, physician)
 - Symptoms (name, date, duration, severity, certainty, status)
 - Diagnoses (name, date, status, certainty) - Look for ASSESSMENT section
-- Lab results (test name, value, unit, reference range) - Only EXTRACTED results, not planned tests
-- Medications (name, dosage, frequency, route) - If "None" or "No medications", return empty array
-- Procedures (name, date, result) - Look for PLAN section for planned procedures/referrals
+- Lab results (test name, value, unit, reference range, abnormal flag) - Only EXTRACTED results, not planned tests
+- Medications (name, dosage, frequency, route, start date, end date) - If "None" or "No medications", return empty array
+- Procedures (name, date, result, finding) - Look for PLAN section for planned procedures/referrals
 - Findings (text, category) - Look for PHYSICAL EXAM, NEUROLOGICAL EXAM sections
+- Allergies (name, severity, reaction, status) - Look for ALLERGIES section
+- Referrals (specialty, reason, date, status) - Look for REFERRALS section
+- Follow-ups (type, reason, date, status) - Look for FOLLOW-UP section
+- Investigation plans (test name, reason, planned date, status) - Look for PLAN section
+- Documented outcomes (procedure outcomes, treatment responses, resolution status)
+- Relevant medical history (conditions, surgeries, hospitalizations) - Look for HISTORY section
 
 CRITICAL RULES:
 - ONLY extract information EXPLICITLY stated in the text
 - Do NOT infer diagnoses from lab results
 - Handle negation correctly: "denies X" = X is absent/denied, "None" = empty array
 - Handle uncertainty correctly: "possible X" = X is suspected, "rule out X" = X is ruled_out
-- Preserve status information: "ongoing", "resolved", "chronic", etc.
+- Preserve status information: "ongoing", "resolved", "chronic", "completed", "unresolved", etc.
 - ASSESSMENT section contains diagnoses/assessments with status (e.g., "Fatigue - ongoing")
 - PLAN section contains planned actions, not actual results (e.g., "Repeat Vitamin B12 level" is a plan, not a result)
 - Distinguish between planned tests and actual lab results
 - If medications list says "None" or "No medications", return empty medications array
+- For dates: if exact date not provided, use approximate format (e.g., "2013", "approximately 2013") - do NOT invent exact day/month
+- For lab values: ensure test name matches its value and unit - do not swap values between tests
+- For durations: only calculate if source explicitly provides it - do not invent durations
 
 Return ONLY the JSON object. No markdown, no explanations.
 
@@ -178,9 +187,26 @@ If you cannot extract information, return an empty JSON object with the requeste
         medications: this.mapMedications(parsed.medications || parsed.Medications || []),
         procedures: this.mapProcedures(parsed.procedures || parsed.Procedures || []),
         findings: parsed.findings || [],
+        allergies: this.mapAllergies(parsed.allergies || parsed.Allergies || []),
+        referrals: this.mapReferrals(parsed.referrals || parsed.Referrals || []),
+        followUps: this.mapFollowUps(parsed.follow_ups || parsed.followUps || parsed['Follow-ups'] || []),
+        investigationPlans: this.mapInvestigationPlans(parsed.investigation_plans || parsed.investigationPlans || parsed['Investigation Plans'] || []),
+        outcomes: this.mapOutcomes(parsed.outcomes || parsed.Outcomes || []),
+        medicalHistory: this.mapMedicalHistory(parsed.medical_history || parsed.medicalHistory || parsed['Medical History'] || []),
         sourceRecordId: recordId,
         extractedAt: new Date().toISOString(),
       };
+
+      // Validate lab results for test/value/unit mismatches
+      if (extraction.labResults.length > 0) {
+        const validations = labValidationService.validateLabResults(extraction.labResults);
+        const hasIssues = validations.some(v => !v.isValid);
+        if (hasIssues) {
+          console.log('[ExtractionService] Lab validation issues detected:', validations.filter(v => !v.isValid).map(v => v.issues));
+          // Apply corrections where possible
+          extraction.labResults = validations.map((v, i) => v.correctedResult || extraction.labResults[i]);
+        }
+      }
 
       return extraction;
     } catch (error) {
@@ -214,36 +240,53 @@ If you cannot extract information, return an empty JSON object with the requeste
   }
 
   private mapSymptoms(symptoms: any[]): any[] {
-    return symptoms.map(s => ({
-      name: s.name || s.Name || '',
-      date: s.date || s.Date || null,
-      duration: s.duration || s.Duration || null,
-      severity: s.severity || s.Severity || null,
-      certainty: s.certainty || s.Certainty || 'present',
-      sourceText: s.sourceText || s.name || s.Name || '',
-    }));
+    return symptoms.map(s => {
+      const dateValidation = dateValidationService.validateDate(s.date || s.Date || null, s.sourceText || s.name || s.Name || '');
+      const durationValidation = dateValidationService.validateDuration(s.duration || s.Duration || null, s.sourceText || s.name || s.Name || '');
+      
+      return {
+        name: s.name || s.Name || '',
+        date: dateValidation.normalizedDate,
+        duration: durationValidation.normalizedDuration,
+        severity: s.severity || s.Severity || null,
+        certainty: s.certainty || s.Certainty || 'present',
+        status: s.status || s.Status || null,
+        datePrecision: dateValidation.datePrecision,
+        sourceText: s.sourceText || s.name || s.Name || '',
+      };
+    });
   }
 
   private mapDiagnoses(diagnoses: any[]): any[] {
-    return diagnoses.map(d => ({
-      name: d.name || d.Name || '',
-      date: d.date || d.Date || null,
-      status: d.status || d.Status || 'active',
-      certainty: d.certainty || d.Certainty || 'confirmed',
-      sourceText: d.sourceText || d.name || d.Name || '',
-    }));
+    return diagnoses.map(d => {
+      const dateValidation = dateValidationService.validateDate(d.date || d.Date || null, d.sourceText || d.name || d.Name || '');
+      
+      return {
+        name: d.name || d.Name || '',
+        date: dateValidation.normalizedDate,
+        status: d.status || d.Status || 'active',
+        certainty: d.certainty || d.Certainty || 'confirmed',
+        datePrecision: dateValidation.datePrecision,
+        sourceText: d.sourceText || d.name || d.Name || '',
+      };
+    });
   }
 
   private mapLabResults(labs: any[]): any[] {
-    return labs.map(l => ({
-      testName: l.testName || l.test_name || l.name || l.Name || '',
-      value: l.value || l.Value || '',
-      unit: l.unit || l.Unit || null,
-      referenceRange: l.referenceRange || l.reference_range || null,
-      isAbnormal: l.isAbnormal || l.is_abnormal || null,
-      date: l.date || l.Date || null,
-      sourceText: l.sourceText || `${l.testName || l.name || l.Name}: ${l.value || l.Value} ${l.unit || l.Unit || ''}` || '',
-    }));
+    return labs.map(l => {
+      const dateValidation = dateValidationService.validateDate(l.date || l.Date || null, l.sourceText || `${l.testName || l.name || l.Name}: ${l.value || l.Value} ${l.unit || l.Unit || ''}` || '');
+      
+      return {
+        testName: l.testName || l.test_name || l.name || l.Name || '',
+        value: l.value || l.Value || '',
+        unit: l.unit || l.Unit || null,
+        referenceRange: l.referenceRange || l.reference_range || null,
+        isAbnormal: l.isAbnormal || l.is_abnormal || null,
+        date: dateValidation.normalizedDate,
+        datePrecision: dateValidation.datePrecision,
+        sourceText: l.sourceText || `${l.testName || l.name || l.Name}: ${l.value || l.Value} ${l.unit || l.Unit || ''}` || '',
+      };
+    });
   }
 
   private mapMedications(meds: any[]): any[] {
@@ -260,12 +303,77 @@ If you cannot extract information, return an empty JSON object with the requeste
   }
 
   private mapProcedures(procedures: any[]): any[] {
-    return procedures.map(p => ({
-      name: p.name || p.Name || '',
-      date: p.date || p.Date || null,
-      result: p.result || p.Result || null,
-      finding: p.finding || p.Finding || null,
-      sourceText: p.sourceText || p.name || p.Name || '',
+    return procedures.map(p => {
+      const dateValidation = dateValidationService.validateDate(p.date || p.Date || null, p.sourceText || p.name || p.Name || '');
+      
+      return {
+        name: p.name || p.Name || '',
+        date: dateValidation.normalizedDate,
+        result: p.result || p.Result || null,
+        finding: p.finding || p.Finding || null,
+        status: p.status || p.Status || null,
+        datePrecision: dateValidation.datePrecision,
+        sourceText: p.sourceText || p.name || p.Name || '',
+      };
+    });
+  }
+
+  private mapAllergies(allergies: any[]): any[] {
+    return allergies.map(a => ({
+      name: a.name || a.Name || '',
+      severity: a.severity || a.Severity || null,
+      reaction: a.reaction || a.Reaction || null,
+      status: a.status || a.Status || 'active',
+      sourceText: a.sourceText || a.name || a.Name || '',
+    }));
+  }
+
+  private mapReferrals(referrals: any[]): any[] {
+    return referrals.map(r => ({
+      specialty: r.specialty || r.Specialty || '',
+      reason: r.reason || r.Reason || null,
+      date: r.date || r.Date || null,
+      status: r.status || r.Status || 'unknown',
+      sourceText: r.sourceText || `${r.specialty || r.Specialty} referral` || '',
+    }));
+  }
+
+  private mapFollowUps(followUps: any[]): any[] {
+    return followUps.map(f => ({
+      type: f.type || f.Type || '',
+      reason: f.reason || f.Reason || null,
+      date: f.date || f.Date || null,
+      status: f.status || f.Status || 'unknown',
+      sourceText: f.sourceText || f.type || f.Type || '',
+    }));
+  }
+
+  private mapInvestigationPlans(plans: any[]): any[] {
+    return plans.map(p => ({
+      testName: p.testName || p.test_name || p.name || p.Name || '',
+      reason: p.reason || p.Reason || null,
+      plannedDate: p.plannedDate || p.planned_date || p.date || p.Date || null,
+      status: p.status || p.Status || 'planned',
+      sourceText: p.sourceText || `${p.testName || p.name || p.Name} investigation` || '',
+    }));
+  }
+
+  private mapOutcomes(outcomes: any[]): any[] {
+    return outcomes.map(o => ({
+      description: o.description || o.Description || '',
+      category: o.category || o.Category || 'other',
+      date: o.date || o.Date || null,
+      sourceText: o.sourceText || o.description || o.Description || '',
+    }));
+  }
+
+  private mapMedicalHistory(history: any[]): any[] {
+    return history.map(h => ({
+      condition: h.condition || h.Condition || '',
+      type: h.type || h.Type || 'condition',
+      date: h.date || h.Date || null,
+      status: h.status || h.Status || null,
+      sourceText: h.sourceText || h.condition || h.Condition || '',
     }));
   }
 

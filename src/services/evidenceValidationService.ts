@@ -191,31 +191,51 @@ export class EvidenceValidationService {
       errors.push('Interpretation confidence is missing');
     }
 
-    // Validate evidence IDs
+    // STRICT EVIDENCE VALIDATION: Reject interpretations without valid evidence IDs
     if (!interpretation.evidenceIds || interpretation.evidenceIds.length === 0) {
-      errors.push('Interpretation has no evidence');
-    } else {
-      for (const evidenceId of interpretation.evidenceIds) {
-        const event = eventMap.get(evidenceId);
-        if (event) {
-          validEvidence.push({
-            eventId: event.id,
-            date: event.date || '',
-            description: event.title,
-            sourceRecordId: event.sourceRecordId,
-            sourceDocumentName: event.sourceDocumentName,
-          });
-        } else {
-          invalidEvidence.push({
-            eventId: evidenceId,
-            date: '',
-            description: '',
-            sourceRecordId: '',
-            sourceDocumentName: 'Unknown',
-          });
-          errors.push(`Evidence ID ${evidenceId} does not exist in timeline`);
-        }
+      errors.push('Interpretation has no evidence IDs - REJECTED');
+      return {
+        isValid: false,
+        errors,
+        warnings,
+        validEvidence,
+        invalidEvidence,
+      };
+    }
+
+    // Validate each evidence ID
+    for (const evidenceId of interpretation.evidenceIds) {
+      const event = eventMap.get(evidenceId);
+      if (event) {
+        validEvidence.push({
+          eventId: event.id,
+          date: event.date || '',
+          description: event.title,
+          sourceRecordId: event.sourceRecordId,
+          sourceDocumentName: event.sourceDocumentName,
+        });
+      } else {
+        invalidEvidence.push({
+          eventId: evidenceId,
+          date: '',
+          description: '',
+          sourceRecordId: '',
+          sourceDocumentName: 'Unknown',
+        });
+        errors.push(`Evidence ID ${evidenceId} does not exist in timeline - REJECTED`);
       }
+    }
+
+    // If any evidence ID is invalid, reject the entire interpretation
+    if (invalidEvidence.length > 0) {
+      errors.push(`Interpretation contains ${invalidEvidence.length} invalid evidence IDs - REJECTED`);
+      return {
+        isValid: false,
+        errors,
+        warnings,
+        validEvidence,
+        invalidEvidence,
+      };
     }
 
     return {

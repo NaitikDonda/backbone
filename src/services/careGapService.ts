@@ -120,6 +120,13 @@ export class CareGapService {
       const uniqueSourceRecords = new Set(relevantEvents.map(e => e.sourceRecordId));
       if (uniqueSourceRecords.size < 2) continue;
       
+      // EXCLUDE if any event has resolved/completed status
+      const hasResolvedStatus = relevantEvents.some(e => {
+        const status = (e.status || '').toLowerCase();
+        return status.includes('resolved') || status.includes('completed') || status.includes('recovered');
+      });
+      if (hasResolvedStatus) continue;
+      
       // Calculate time span
       const sortedEvents = relevantEvents.filter(e => e.date).sort((a, b) => 
         new Date(a.date!).getTime() - new Date(b.date!).getTime()
@@ -515,6 +522,20 @@ export class CareGapService {
     );
     
     for (const investigation of investigations) {
+      // EXCLUDE if procedure has completed/resolved status or documented outcome
+      const status = (investigation.status || '').toLowerCase();
+      const desc = (investigation.description || '').toLowerCase();
+      
+      const hasOutcome = 
+        status.includes('completed') || 
+        status.includes('resolved') ||
+        desc.includes('outcome') ||
+        desc.includes('result') ||
+        desc.includes('uneventful') ||
+        desc.includes('successful');
+      
+      if (hasOutcome) continue;
+      
       if (!investigation.date) continue;
       
       const invDate = new Date(investigation.date);
