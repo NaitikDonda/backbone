@@ -93,6 +93,11 @@ export function Overview() {
   const handleAnalyzeHealthHistory = async () => {
     setIsAnalyzing(true);
     try {
+      console.log('[Overview] Starting analysis with events:', timelineData.events.length);
+      console.log('[Overview] Events sample:', timelineData.events.slice(0, 3));
+      console.log('[Overview] Patterns:', timelineData.patterns.length);
+      console.log('[Overview] Summary:', timelineData.summary);
+      
       const result = await analysisService.analyzePatient(
         mockPatient.id,
         timelineData.events,
@@ -100,11 +105,16 @@ export function Overview() {
         timelineData.summary
       );
       
+      console.log('[Overview] Analysis result:', result);
+      console.log('[Overview] Signals received:', result.signals.length);
+      
       if (result.success) {
         setClinicalSignals(result.signals);
+      } else {
+        console.error('[Overview] Analysis failed:', result.error);
       }
     } catch (error) {
-      console.error('Analysis failed:', error);
+      console.error('[Overview] Analysis error:', error);
     } finally {
       setIsAnalyzing(false);
     }
