@@ -1,4 +1,4 @@
-import type { StructuredExtraction } from '../types';
+import type { StructuredExtraction, ExtractedPatientInfo } from '../types';
 import { labValidationService } from './labValidationService';
 import { dateValidationService } from './dateValidationService';
 
@@ -62,21 +62,41 @@ export class ExtractionService {
   private buildExtractionPrompt(text: string, _recordId: string, _pages?: Array<{ pageNumber: number; text: string }>): string {
     return `Extract medical information from this text as JSON.
 
+IMPORTANT: Return ONLY arrays for multi-value fields (symptoms, diagnoses, lab results, medications, procedures, findings, allergies, referrals, follow-ups, investigation plans, outcomes, medical history). Do NOT return comma-separated strings.
+
+Required JSON structure:
+{
+  "patient_info": {"name": "...", "age": ..., "sex": "...", "date": "..."},
+  "encounter_info": {"date": "...", "type": "...", "facility": "...", "department": "...", "physician": "..."},
+  "symptoms": [{"name": "...", "date": "...", "duration": "...", "severity": "...", "certainty": "present", "status": "..."}],
+  "diagnoses": [{"name": "...", "date": "...", "status": "...", "certainty": "..."}],
+  "lab_results": [{"testName": "...", "value": "...", "unit": "...", "referenceRange": "...", "isAbnormal": ..., "date": "..."}],
+  "medications": [{"name": "...", "dosage": "...", "frequency": "...", "route": "...", "startDate": "...", "endDate": "..."}],
+  "procedures": [{"name": "...", "date": "...", "result": "...", "finding": "..."}],
+  "findings": ["..."],
+  "allergies": [{"name": "...", "severity": "...", "reaction": "...", "status": "..."}],
+  "referrals": [{"specialty": "...", "reason": "...", "date": "...", "status": "..."}],
+  "follow_ups": [{"type": "...", "reason": "...", "date": "...", "status": "..."}],
+  "investigation_plans": [{"testName": "...", "reason": "...", "plannedDate": "...", "status": "..."}],
+  "outcomes": [{"description": "...", "category": "...", "date": "..."}],
+  "medical_history": [{"condition": "...", "type": "...", "date": "...", "status": "..."}]
+}
+
 Extract these categories if present:
 - Patient info (name, age, sex, date)
 - Encounter info (date, type, facility, department, physician)
-- Symptoms (name, date, duration, severity, certainty, status)
-- Diagnoses (name, date, status, certainty) - Look for ASSESSMENT section
-- Lab results (test name, value, unit, reference range, abnormal flag) - Only EXTRACTED results, not planned tests
-- Medications (name, dosage, frequency, route, start date, end date) - If "None" or "No medications", return empty array
-- Procedures (name, date, result, finding) - Look for PLAN section for planned procedures/referrals
-- Findings (text, category) - Look for PHYSICAL EXAM, NEUROLOGICAL EXAM sections
-- Allergies (name, severity, reaction, status) - Look for ALLERGIES section
-- Referrals (specialty, reason, date, status) - Look for REFERRALS section
-- Follow-ups (type, reason, date, status) - Look for FOLLOW-UP section
-- Investigation plans (test name, reason, planned date, status) - Look for PLAN section
-- Documented outcomes (procedure outcomes, treatment responses, resolution status)
-- Relevant medical history (conditions, surgeries, hospitalizations) - Look for HISTORY section
+- Symptoms (name, date, duration, severity, certainty, status) - MUST be array of objects
+- Diagnoses (name, date, status, certainty) - Look for ASSESSMENT section - MUST be array of objects
+- Lab results (test name, value, unit, reference range, abnormal flag) - Only EXTRACTED results, not planned tests - MUST be array of objects
+- Medications (name, dosage, frequency, route, start date, end date) - If "None" or "No medications", return empty array - MUST be array of objects
+- Procedures (name, date, result, finding) - Look for PLAN section for planned procedures/referrals - MUST be array of objects
+- Findings (text, category) - Look for PHYSICAL EXAM, NEUROLOGICAL EXAM sections - MUST be array of strings
+- Allergies (name, severity, reaction, status) - Look for ALLERGIES section - MUST be array of objects
+- Referrals (specialty, reason, date, status) - Look for REFERRALS section - MUST be array of objects
+- Follow-ups (type, reason, date, status) - Look for FOLLOW-UP section - MUST be array of objects
+- Investigation plans (test name, reason, planned date, status) - Look for PLAN section - MUST be array of objects
+- Documented outcomes (procedure outcomes, treatment responses, resolution status) - MUST be array of objects
+- Relevant medical history (conditions, surgeries, hospitalizations) - Look for HISTORY section - MUST be array of objects
 
 CRITICAL RULES:
 - ONLY extract information EXPLICITLY stated in the text
@@ -91,6 +111,7 @@ CRITICAL RULES:
 - For dates: if exact date not provided, use approximate format (e.g., "2013", "approximately 2013") - do NOT invent exact day/month
 - For lab values: ensure test name matches its value and unit - do not swap values between tests
 - For durations: only calculate if source explicitly provides it - do not invent durations
+- ALL multi-value fields MUST be arrays, NOT comma-separated strings
 
 Return ONLY the JSON object. No markdown, no explanations.
 
@@ -177,22 +198,25 @@ If you cannot extract information, return an empty JSON object with the requeste
       const parsed = JSON.parse(jsonText);
       console.log('[ExtractionService] JSON parsed successfully, keys:', Object.keys(parsed));
       
+      // Normalize parsed data - ensure arrays are always arrays, not strings
+      const normalized = this.normalizeParsedData(parsed);
+      
       // Map model's key naming to our schema
       const extraction: StructuredExtraction = {
-        patient: this.mapPatientInfo(parsed.patient_info || parsed.patient || parsed['Patient Info'] || parsed.patientInfo || {}),
-        encounter: this.mapEncounterInfo(parsed.encounter_info || parsed.encounter || parsed['Encounter Info'] || parsed.encounterInfo || {}),
-        symptoms: this.mapSymptoms(parsed.symptoms || parsed.Symptoms || []),
-        diagnoses: this.mapDiagnoses(parsed.diagnoses || parsed.Diagnoses || []),
-        labResults: this.mapLabResults(parsed.lab_results || parsed.labResults || parsed['Lab Results'] || parsed.lab_results || []),
-        medications: this.mapMedications(parsed.medications || parsed.Medications || []),
-        procedures: this.mapProcedures(parsed.procedures || parsed.Procedures || []),
-        findings: parsed.findings || [],
-        allergies: this.mapAllergies(parsed.allergies || parsed.Allergies || []),
-        referrals: this.mapReferrals(parsed.referrals || parsed.Referrals || []),
-        followUps: this.mapFollowUps(parsed.follow_ups || parsed.followUps || parsed['Follow-ups'] || []),
-        investigationPlans: this.mapInvestigationPlans(parsed.investigation_plans || parsed.investigationPlans || parsed['Investigation Plans'] || []),
-        outcomes: this.mapOutcomes(parsed.outcomes || parsed.Outcomes || []),
-        medicalHistory: this.mapMedicalHistory(parsed.medical_history || parsed.medicalHistory || parsed['Medical History'] || []),
+        patient: this.mapPatientInfo(normalized.patient_info || normalized.patient || normalized['Patient Info'] || normalized.patientInfo || {}),
+        encounter: this.mapEncounterInfo(normalized.encounter_info || normalized.encounter || normalized['Encounter Info'] || normalized.encounterInfo || {}),
+        symptoms: this.mapSymptoms(normalized.symptoms || normalized.Symptoms || []),
+        diagnoses: this.mapDiagnoses(normalized.diagnoses || normalized.Diagnoses || []),
+        labResults: this.mapLabResults(normalized.lab_results || normalized.labResults || normalized['Lab Results'] || normalized.lab_results || []),
+        medications: this.mapMedications(normalized.medications || normalized.Medications || []),
+        procedures: this.mapProcedures(normalized.procedures || normalized.Procedures || []),
+        findings: normalized.findings || [],
+        allergies: this.mapAllergies(normalized.allergies || normalized.Allergies || []),
+        referrals: this.mapReferrals(normalized.referrals || normalized.Referrals || []),
+        followUps: this.mapFollowUps(normalized.follow_ups || normalized.followUps || normalized['Follow-ups'] || []),
+        investigationPlans: this.mapInvestigationPlans(normalized.investigation_plans || normalized.investigationplans || normalized['Investigation Plans'] || []),
+        outcomes: this.mapOutcomes(normalized.outcomes || normalized.Outcomes || []),
+        medicalHistory: this.mapMedicalHistory(normalized.medical_history || normalized.medicalHistory || normalized['Medical History'] || []),
         sourceRecordId: recordId,
         extractedAt: new Date().toISOString(),
       };
@@ -219,13 +243,45 @@ If you cannot extract information, return an empty JSON object with the requeste
     }
   }
 
-  private mapPatientInfo(info: any): any {
+  /**
+   * Normalize parsed data to ensure arrays are always arrays, not strings
+   * Handles cases where AI returns comma-separated strings instead of arrays
+   */
+  private normalizeParsedData(parsed: any): any {
+    const arrayFields = [
+      'symptoms', 'diagnoses', 'lab_results', 'labResults', 'Lab Results',
+      'medications', 'procedures', 'findings', 'allergies', 'referrals',
+      'follow_ups', 'followUps', 'Follow-ups', 'investigation_plans',
+      'investigationPlans', 'Investigation Plans', 'outcomes', 'medical_history',
+      'medicalHistory', 'Medical History'
+    ];
+
+    const normalized = { ...parsed };
+
+    for (const field of arrayFields) {
+      if (normalized[field] && typeof normalized[field] === 'string') {
+        // Convert comma-separated string to array
+        const value = normalized[field];
+        if (value.trim() === '' || value === 'None' || value === 'none') {
+          normalized[field] = [];
+        } else {
+          // Split by comma and trim
+          normalized[field] = value.split(',').map((item: string) => item.trim()).filter((item: string) => item);
+        }
+        console.log(`[ExtractionService] Normalized ${field} from string to array:`, normalized[field]);
+      }
+    }
+
+    return normalized;
+  }
+
+  private mapPatientInfo(patientInfo: any): ExtractedPatientInfo {
     return {
-      name: info.name || info.patient_name || info.Name || null,
-      dateOfBirth: info.dateOfBirth || info.date_of_birth || info.date || info.Date || null,
-      age: info.age || info.Age || null,
-      sex: info.sex || info.Sex || null,
-      patientId: info.patientId || info.patient_id || null,
+      name: patientInfo.name || patientInfo.Name || null,
+      dateOfBirth: patientInfo.dateOfBirth || patientInfo.date_of_birth || patientInfo.date || patientInfo.Date || null,
+      age: patientInfo.age || patientInfo.Age || null,
+      sex: patientInfo.sex || patientInfo.Sex || null,
+      patientId: patientInfo.patientId || patientInfo.patient_id || null,
     };
   }
 
