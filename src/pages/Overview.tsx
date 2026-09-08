@@ -95,6 +95,7 @@ export function Overview() {
     try {
       console.log('[Overview] Starting analysis with events:', timelineData.events.length);
       console.log('[Overview] Events sample:', timelineData.events.slice(0, 3));
+      console.log('[Overview] All events source documents:', [...new Set(timelineData.events.map(e => e.sourceDocumentName))]);
       console.log('[Overview] Patterns:', timelineData.patterns.length);
       console.log('[Overview] Summary:', timelineData.summary);
       
