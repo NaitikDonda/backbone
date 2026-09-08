@@ -76,6 +76,38 @@ export class MedicalEventService {
     // Create events for diagnoses
     extraction.diagnoses.forEach((diagnosis) => {
       if (diagnosis.certainty !== 'ruled_out') {
+        // Validate diagnosis name - reject non-medical text
+        const invalidKeywords = [
+          'Sunrise Corporate Tower', 'Andheri West', 'Mumbai', 'Maharashtra', 'India',
+          'MD (Pathology)', 'MD (Diabetology)', 'DMLT Lab Technician', 'Emp. ID',
+          'Reg. No.', 'e-signed', 'SYNTHETIC DATA', 'NABL', 'ISO',
+          'Metropolis Healthcare', 'AROGYA PATH', 'Ph:', 'Email:', 'Page',
+          'please contact the laboratory', 'Electronically Verified', 'Authorized',
+          'Specimen', 'Venous blood', 'EDTA', 'Plain', 'Fluoride', 'Random Urine',
+          'Fasting Status', 'Clinical Notes', 'Lab Location', 'Bandra',
+          'COMPLETE BLOOD COUNT', 'BLOOD GLUCOSE', 'LIPID PROFILE', 'KIDNEY FUNCTION TEST',
+          'LIVER FUNCTION TEST', 'THYROID PROFILE', 'VITAMINS', 'URINE ROUTINE',
+          'URINE MICROALBUMIN', 'INFLAMMATORY MARKER', 'CLINICAL IMPRESSION',
+          'REMARKS', 'Test Name', 'Result', 'Unit', 'Reference Range', 'Flag',
+          'Accession No', 'Collected', 'Reported', 'Consultant Pathologist',
+          'Lab Technician', 'Sample Processing'
+        ];
+
+        const diagnosisLower = diagnosis.name.toLowerCase();
+        const hasInvalidKeyword = invalidKeywords.some(keyword =>
+          diagnosisLower.includes(keyword.toLowerCase())
+        );
+
+        // Also reject if it looks like an address or phone number
+        const looksLikeAddress = /^\d+.*\d{5,6}$/.test(diagnosis.name.trim());
+        const looksLikePhone = /Ph:|Phone|Mobile|Contact/.test(diagnosis.name);
+        const looksLikeEmail = /@|Email/.test(diagnosis.name);
+
+        if (hasInvalidKeyword || looksLikeAddress || looksLikePhone || looksLikeEmail) {
+          console.log(`[MedicalEventService] Skipping invalid diagnosis: ${diagnosis.name}`);
+          return;
+        }
+
         const eventDate = diagnosis.date || encounterDate;
         events.push({
           id: `${record.id}-diagnosis-${this.normalizeName(diagnosis.name)}`,

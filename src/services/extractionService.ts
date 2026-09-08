@@ -104,11 +104,24 @@ export class ExtractionService {
   "medicalHistory": []
 }
 
+CRITICAL RULES:
+1. EXCLUDE from ALL fields: addresses, phone numbers, email addresses, clinic names, doctor names, signatures, disclaimers, footers, page numbers, "SYNTHETIC DATA" warnings, lab report headers, accession numbers, specimen types, collection dates (unless it's the encounter date), "Reg. No.", "Emp. ID", "e-signed", "NABL", "ISO", "Metropolis Healthcare", "AROGYA PATH", "Sunrise Corporate Tower", "Andheri West", "Mumbai", "Maharashtra", "India", "Ph:", "Email:", "Page 1", "Page 2", "Page 3"
+
+2. DIAGNOSES must ONLY be medical conditions or diseases. Examples of VALID diagnoses: "Type 2 Diabetes Mellitus", "Hypertension", "Dyslipidemia", "Diabetic Nephropathy", "Subclinical Hypothyroidism". Examples of INVALID: "Sunrise Corporate Tower", "Andheri West", "Mumbai 400058", "MD (Pathology)", "DMLT Lab Technician", "please contact the laboratory"
+
+3. DATES: Extract dates in YYYY-MM-DD format. Look for "Collection Date", "Report Date", "Date of Birth", or dates associated with diagnoses/medications. If no clear date is found, use null. Do NOT extract random numbers as dates.
+
+4. SYMPTOMS: Only extract patient-reported symptoms like "fever", "headache", "chest pain". Exclude lab test names, vitals, or procedure names.
+
+5. MEDICATIONS: Only extract actual drug names with dosages. Exclude "Specimen", "Venous blood", "EDTA/Plain/Fluoride", "Random Urine", "Fasting Status"
+
+6. LAB RESULTS: Only extract test-result pairs. Exclude the entire lab report header, footer, and metadata.
+
 Extract:
 - Patient: name, age, sex, date of birth
 - Encounter: date, type, facility, department, reason
 - Symptoms: name, date, duration, severity, certainty, status
-- Diagnoses: name, date, status, certainty
+- Diagnoses: name, date, status, certainty (ONLY medical conditions)
 - Lab results: test name, value, unit, reference range, abnormal flag, date
 - Medications: name, dosage, frequency, route, start date, end date
 - Procedures: name, date, result, finding
@@ -142,7 +155,7 @@ Return ONLY the JSON object with the fields: patient, encounter, symptoms, diagn
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          model: 'llama3.2',
+          model: 'gpt-6-astra',
           system: systemPrompt,
           prompt,
           stream: false,
