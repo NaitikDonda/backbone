@@ -36,7 +36,24 @@ export function Overview() {
     for (const record of records) {
       const patient = record.structuredExtraction?.patient;
       if (patient) {
-        if (!name && patient.name) name = patient.name;
+        if (!name && patient.name) {
+          // Additional validation in Overview - reject if name contains document metadata
+          const invalidKeywords = [
+            'Date of Birth', 'Gender', 'Patient ID', 'Location', 'Report Period',
+            'INDEX OF REPORTS', 'Collection Date', 'Reason for Visit', 'Total Reports',
+            'Included', 'Clinical Impression', 'History of Present Illness'
+          ];
+          const nameLower = patient.name.toLowerCase();
+          const hasInvalidKeyword = invalidKeywords.some(keyword => 
+            nameLower.includes(keyword.toLowerCase())
+          );
+          const isTooLong = patient.name.length > 100;
+          const hasDocumentStructure = patient.name.includes(':') && patient.name.split(':').length > 2;
+          
+          if (!hasInvalidKeyword && !isTooLong && !hasDocumentStructure) {
+            name = patient.name;
+          }
+        }
         if (!age && patient.age) {
           const ageStr = String(patient.age);
           const ageNum = parseInt(ageStr.replace(/\D/g, ''));

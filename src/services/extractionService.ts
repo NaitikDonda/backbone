@@ -511,12 +511,39 @@ Return ONLY the JSON object with the fields: patient, encounter, symptoms, diagn
   }
 
   private mapPatientInfo(patientInfo: any): ExtractedPatientInfo {
+    const rawName = patientInfo.name || null;
+    
+    // Validate patient name - reject if it contains document metadata
+    const invalidKeywords = [
+      'Date of Birth', 'Gender', 'Patient ID', 'Location', 'Report Period',
+      'INDEX OF REPORTS', 'Collection Date', 'Reason for Visit', 'Total Reports',
+      'Included', 'Clinical Impression', 'History of Present Illness'
+    ];
+    
+    let validatedName: string | null = null;
+    if (rawName && typeof rawName === 'string') {
+      const nameLower = rawName.toLowerCase();
+      const hasInvalidKeyword = invalidKeywords.some(keyword => 
+        nameLower.includes(keyword.toLowerCase())
+      );
+      
+      // Also reject if name is too long (likely not a real name)
+      const isTooLong = rawName.length > 100;
+      
+      // Also reject if it contains multiple colons or newlines (document structure)
+      const hasDocumentStructure = rawName.includes(':') && rawName.split(':').length > 2;
+      
+      if (!hasInvalidKeyword && !isTooLong && !hasDocumentStructure) {
+        validatedName = rawName.trim();
+      }
+    }
+    
     return {
-      name: patientInfo.name || null,
-      dateOfBirth: patientInfo.dateOfBirth || null,
+      name: validatedName,
+      dateOfBirth: patientInfo.dateOfBirth || patientInfo.date_of_birth || null,
       age: patientInfo.age || null,
       sex: patientInfo.sex || null,
-      patientId: patientInfo.patientId || null,
+      patientId: patientInfo.patientId || patientInfo.patient_id || null,
     };
   }
 
