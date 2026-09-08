@@ -25,7 +25,7 @@ export class OllamaService {
     // Ollama base URL - configurable via environment variable
     this.baseUrl = import.meta.env.VITE_OLLAMA_BASE_URL || 'http://localhost:11434';
     // Model name - configurable via environment variable
-    this.model = import.meta.env.VITE_OLLAMA_MODEL || 'gpt-6-astra';
+    this.model = import.meta.env.VITE_OLLAMA_MODEL || 'llama3.2';
     // Timeout for requests in milliseconds
     this.timeoutMs = 120000; // 2 minutes
   }

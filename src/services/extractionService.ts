@@ -155,7 +155,7 @@ Return ONLY the JSON object with the fields: patient, encounter, symptoms, diagn
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          model: 'gpt-6-astra',
+          model: 'llama3.2',
           system: systemPrompt,
           prompt,
           stream: false,
