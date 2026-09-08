@@ -362,11 +362,18 @@ export class CandidateAnalysisService {
   }
 
   /**
-   * Generate cache key
+   * Generate cache key based on dataset fingerprint
    */
   private getCacheKey(patientId: string, events: MedicalEvent[]): string {
+    // Create a fingerprint based on:
+    // - Patient ID
+    // - Unique source document names (sorted)
+    // - Event count
+    // - Event IDs (sorted)
+    const sourceDocuments = [...new Set(events.map(e => e.sourceDocumentName))].sort().join(',');
     const eventIds = events.map(e => e.id).sort().join(',');
-    return `candidate:${patientId}:${eventIds}`;
+    const fingerprint = `${sourceDocuments}|${events.length}|${eventIds}`;
+    return `candidate:${patientId}:${fingerprint}`;
   }
 
   /**

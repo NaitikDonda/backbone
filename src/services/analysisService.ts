@@ -52,8 +52,15 @@ export class AnalysisService {
     console.log('[AnalysisService] Events count:', events.length);
     console.log('[AnalysisService] Patterns count:', patterns.length);
     
-    // Check cache
+    // Debug logging for dataset fingerprint
+    const sourceDocuments = [...new Set(events.map(e => e.sourceDocumentName))].sort();
     const cacheKey = this.getCacheKey(patientId, events);
+    console.log('[AnalysisService] Analysis dataset:');
+    console.log('[AnalysisService]   events:', events.length);
+    console.log('[AnalysisService]   sourceDocuments:', sourceDocuments.join(', '));
+    console.log('[AnalysisService]   cacheKey:', cacheKey);
+    
+    // Check cache
     if (!forceRefresh && this.cache.has(cacheKey)) {
       const cached = this.cache.get(cacheKey)!;
       if (Date.now() - cached.timestamp < this.CACHE_DURATION_MS) {
@@ -209,12 +216,18 @@ export class AnalysisService {
   }
 
   /**
-   * Generate cache key
+   * Generate cache key based on dataset fingerprint
    */
   private getCacheKey(patientId: string, events: MedicalEvent[]): string {
-    // Simple hash based on event IDs
+    // Create a fingerprint based on:
+    // - Patient ID
+    // - Unique source document names (sorted)
+    // - Event count
+    // - Event IDs (sorted)
+    const sourceDocuments = [...new Set(events.map(e => e.sourceDocumentName))].sort().join(',');
     const eventIds = events.map(e => e.id).sort().join(',');
-    return `${patientId}:${eventIds}`;
+    const fingerprint = `${sourceDocuments}|${events.length}|${eventIds}`;
+    return `${patientId}:${fingerprint}`;
   }
 
   /**
