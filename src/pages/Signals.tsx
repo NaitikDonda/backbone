@@ -26,6 +26,15 @@ export function Signals() {
 
   const timelineData = timelineService.getTimeline(records);
 
+  // Debug logging to verify data consistency
+  useEffect(() => {
+    console.log('[Signals] Records loaded:', records.length);
+    console.log('[Signals] Timeline events:', timelineData.events.length);
+    console.log('[Signals] Timeline patterns:', timelineData.patterns.length);
+    console.log('[Signals] Event types:', timelineData.events.map(e => e.eventType));
+    console.log('[Signals] Timeline data:', timelineData);
+  }, [records, timelineData]);
+
   // Load saved analysis from localStorage on mount
   useEffect(() => {
     const savedSignals = localStorage.getItem(`signals_${mockPatient.id}`);
@@ -74,7 +83,7 @@ export function Signals() {
       console.log('Starting full analysis...');
       console.log('Timeline events:', timelineData.events.length);
       console.log('Timeline patterns:', timelineData.patterns.length);
-      
+
       // Run clinical signals analysis
       const signalResult = await analysisService.analyzePatient(
         mockPatient.id,
@@ -102,7 +111,7 @@ export function Signals() {
       if (candidateResult.success) {
         setCandidateReviews(candidateResult.candidateReviews);
         console.log('Candidate reviews set:', candidateResult.candidateReviews.length);
-        
+
         // Run care gaps analysis
         const gaps = careGapService.analyzeCareGaps(
           mockPatient.id,
@@ -122,6 +131,21 @@ export function Signals() {
     }
   };
 
+  const handleResetAnalysis = () => {
+    if (confirm('Are you sure you want to reset all analysis? This cannot be undone.')) {
+      localStorage.removeItem(`signals_${mockPatient.id}`);
+      localStorage.removeItem(`candidates_${mockPatient.id}`);
+      localStorage.removeItem(`gaps_${mockPatient.id}`);
+      localStorage.removeItem(`summary_${mockPatient.id}`);
+      setClinicalSignals([]);
+      setCandidateReviews([]);
+      setCareGaps([]);
+      setAnalysisSummary('');
+      // Clear analysis service cache
+      analysisService.clearCache(mockPatient.id);
+    }
+  };
+
   const hasSignals = clinicalSignals.length > 0;
   const hasCandidates = candidateReviews.length > 0;
   const hasGaps = careGaps.length > 0;
@@ -130,10 +154,22 @@ export function Signals() {
     <div className="max-w-4xl">
       {/* Header */}
       <div className="mb-16">
-        <h1 className="text-display text-text-primary mb-4">Insights</h1>
-        <p className="text-h2 text-text-secondary font-light mb-8">
-          AI-detected patterns, care gaps, and clinical signals
-        </p>
+        <div className="flex items-start justify-between mb-4">
+          <div>
+            <h1 className="text-display text-text-primary mb-4">Insights</h1>
+            <p className="text-h2 text-text-secondary font-light">
+              AI-detected patterns, care gaps, and clinical signals
+            </p>
+          </div>
+          {(hasSignals || hasCandidates || hasGaps) && (
+            <button
+              onClick={handleResetAnalysis}
+              className="btn btn-ghost text-small"
+            >
+              Reset Analysis
+            </button>
+          )}
+        </div>
         {isAnalysisAvailable && (
           <button
             onClick={handleRunFullAnalysis}

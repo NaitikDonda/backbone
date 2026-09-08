@@ -37,16 +37,24 @@ export class TimelineService {
    * Get the complete timeline for a patient
    */
   getTimeline(records: MedicalRecord[]): TimelineData {
+    console.log('[TimelineService] Creating timeline from', records.length, 'records');
+
     // Create events from all records
-    const allEvents = records.flatMap(record => 
+    const allEvents = records.flatMap(record =>
       this.medicalEventService.createEventsFromRecord(record)
     );
+
+    console.log('[TimelineService] Created', allEvents.length, 'events from records');
 
     // Deduplicate events
     const deduplicatedEvents = this.medicalEventService.deduplicateEvents(allEvents);
 
+    console.log('[TimelineService] After deduplication:', deduplicatedEvents.length, 'events');
+
     // Separate dated and undated events
     const { dated, undated } = this.medicalEventService.separateByDate(deduplicatedEvents);
+
+    console.log('[TimelineService] Dated events:', dated.length, 'Undated events:', undated.length);
 
     // Sort dated events chronologically
     const sortedEvents = this.medicalEventService.sortEventsChronologically(dated);
@@ -61,8 +69,14 @@ export class TimelineService {
     const patientId = records[0]?.patientId || '';
     const patterns = this.patternDetectionService.detectPatterns(deduplicatedEvents, patientId);
 
+    console.log('[TimelineService] Patterns detected:', patterns.length);
+
+    // Include both dated and undated events in the timeline
+    // Undated events will be shown at the end
+    const allSortedEvents = [...sortedEvents, ...undated];
+
     return {
-      events: sortedEvents,
+      events: allSortedEvents,
       undatedEvents: undated,
       metrics,
       summary,

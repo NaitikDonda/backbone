@@ -32,7 +32,23 @@ PRIORITIZATION RULES:
 - Prioritize symptom → investigation → diagnosis → treatment sequences
 - Deprioritize trivial isolated events
 - Deprioritize single occurrences without recurrence
+- Deprioritize co-occurring events on the same date (not a longitudinal pattern)
 - Rank interpretations by: longitudinal significance, recurrence count, time span, evidence quality
+
+MINIMUM EVIDENCE REQUIREMENTS:
+- Each interpretation must have at least 2 supporting events
+- Events must span at least 2 different dates (not same-day co-occurrence)
+- For recurrence: same finding must appear in at least 2 separate encounters
+- For progression: must show change over time (e.g., worsening lab values, escalating treatment)
+- For sequences: must show documented temporal relationship (symptom → test → result)
+- REJECT interpretations that only show "X and Y occurred on the same date"
+
+TRIVIAL PATTERN REJECTION:
+- Do NOT create insights for: "symptom + medication on same date"
+- Do NOT create insights for: single lab result without comparison
+- Do NOT create insights for: one-time occurrence without recurrence
+- Do NOT create insights for: isolated events without temporal relationship
+- If insufficient evidence for meaningful pattern: return empty interpretations array
 
 AI SAFETY RULES:
 - NEVER make unsupported risk claims (e.g., "high risk for cardiovascular events")

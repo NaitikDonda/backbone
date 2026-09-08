@@ -20,12 +20,31 @@ export class MedicalEventService {
     const extraction = record.structuredExtraction;
 
     if (!extraction) {
+      console.log(`[MedicalEventService] No extraction found for record ${record.id}`);
       return events;
     }
 
+    console.log(`[MedicalEventService] Creating events from record ${record.id} (${record.filename})`);
+    console.log(`[MedicalEventService] Extraction contains:`, {
+      symptoms: extraction.symptoms.length,
+      diagnoses: extraction.diagnoses.length,
+      labResults: extraction.labResults.length,
+      medications: extraction.medications.length,
+      procedures: extraction.procedures.length,
+      findings: extraction.findings.length,
+      allergies: extraction.allergies.length,
+      referrals: extraction.referrals.length,
+      followUps: extraction.followUps.length,
+      investigationPlans: extraction.investigationPlans.length,
+      outcomes: extraction.outcomes.length,
+      medicalHistory: extraction.medicalHistory.length,
+      patient: extraction.patient,
+      encounter: extraction.encounter,
+    });
+
     // Get the most reliable date for this record
     const encounterDate = this.extractDate(record, extraction);
-    
+
     // Get page information from metadata if available
     const pageNumbers = this.extractPageNumbers(record);
 
@@ -155,6 +174,138 @@ export class MedicalEventService {
       });
     });
 
+    // Create events for allergies
+    extraction.allergies.forEach((allergy) => {
+      events.push({
+        id: `${record.id}-allergy-${this.normalizeName(allergy.name)}`,
+        patientId: record.patientId,
+        eventType: 'diagnosis', // Treat allergies as a type of diagnosis for now
+        title: `Allergy: ${allergy.name}`,
+        description: allergy.reaction ? `Reaction: ${allergy.reaction}` : null,
+        date: encounterDate,
+        endDate: null,
+        status: allergy.status,
+        severity: allergy.severity,
+        sourceRecordId: record.id,
+        sourceDocumentName: record.filename,
+        sourceText: allergy.sourceText,
+        metadata: {
+          encounterId: encounterDate ? `encounter-${encounterDate}` : undefined,
+          pageNumber: pageNumbers[0] || undefined,
+        },
+      });
+    });
+
+    // Create events for referrals
+    extraction.referrals.forEach((referral) => {
+      events.push({
+        id: `${record.id}-referral-${this.normalizeName(referral.specialty)}`,
+        patientId: record.patientId,
+        eventType: 'procedure', // Treat referrals as procedures for now
+        title: `Referral: ${referral.specialty}`,
+        description: referral.reason || null,
+        date: referral.date || encounterDate,
+        endDate: null,
+        status: referral.status,
+        severity: null,
+        sourceRecordId: record.id,
+        sourceDocumentName: record.filename,
+        sourceText: referral.sourceText,
+        metadata: {
+          encounterId: encounterDate ? `encounter-${encounterDate}` : undefined,
+          pageNumber: pageNumbers[0] || undefined,
+        },
+      });
+    });
+
+    // Create events for follow-ups
+    extraction.followUps.forEach((followUp) => {
+      events.push({
+        id: `${record.id}-followup-${this.normalizeName(followUp.type)}`,
+        patientId: record.patientId,
+        eventType: 'procedure', // Treat follow-ups as procedures for now
+        title: `Follow-up: ${followUp.type}`,
+        description: followUp.reason || null,
+        date: followUp.date || encounterDate,
+        endDate: null,
+        status: followUp.status,
+        severity: null,
+        sourceRecordId: record.id,
+        sourceDocumentName: record.filename,
+        sourceText: followUp.sourceText,
+        metadata: {
+          encounterId: encounterDate ? `encounter-${encounterDate}` : undefined,
+          pageNumber: pageNumbers[0] || undefined,
+        },
+      });
+    });
+
+    // Create events for investigation plans
+    extraction.investigationPlans.forEach((plan) => {
+      events.push({
+        id: `${record.id}-investigation-${this.normalizeName(plan.testName)}`,
+        patientId: record.patientId,
+        eventType: 'procedure', // Treat investigation plans as procedures for now
+        title: `Planned: ${plan.testName}`,
+        description: plan.reason || null,
+        date: plan.plannedDate || encounterDate,
+        endDate: null,
+        status: plan.status,
+        severity: null,
+        sourceRecordId: record.id,
+        sourceDocumentName: record.filename,
+        sourceText: plan.sourceText,
+        metadata: {
+          encounterId: encounterDate ? `encounter-${encounterDate}` : undefined,
+          pageNumber: pageNumbers[0] || undefined,
+        },
+      });
+    });
+
+    // Create events for outcomes
+    extraction.outcomes.forEach((outcome) => {
+      events.push({
+        id: `${record.id}-outcome-${this.normalizeName(outcome.description.substring(0, 20))}`,
+        patientId: record.patientId,
+        eventType: 'diagnosis', // Treat outcomes as diagnoses for now
+        title: `Outcome: ${outcome.category}`,
+        description: outcome.description,
+        date: outcome.date || encounterDate,
+        endDate: null,
+        status: null,
+        severity: null,
+        sourceRecordId: record.id,
+        sourceDocumentName: record.filename,
+        sourceText: outcome.sourceText,
+        metadata: {
+          encounterId: encounterDate ? `encounter-${encounterDate}` : undefined,
+          pageNumber: pageNumbers[0] || undefined,
+        },
+      });
+    });
+
+    // Create events for medical history
+    extraction.medicalHistory.forEach((history) => {
+      events.push({
+        id: `${record.id}-history-${this.normalizeName(history.condition.substring(0, 20))}`,
+        patientId: record.patientId,
+        eventType: 'diagnosis', // Treat medical history as diagnoses for now
+        title: `History: ${history.condition}`,
+        description: history.type ? `Type: ${history.type}` : null,
+        date: history.date || encounterDate,
+        endDate: null,
+        status: history.status,
+        severity: null,
+        sourceRecordId: record.id,
+        sourceDocumentName: record.filename,
+        sourceText: history.sourceText,
+        metadata: {
+          encounterId: encounterDate ? `encounter-${encounterDate}` : undefined,
+          pageNumber: pageNumbers[0] || undefined,
+        },
+      });
+    });
+
     // Create an event for the encounter itself
     if (extraction.encounter.type || extraction.encounter.facility) {
       events.push({
@@ -177,6 +328,8 @@ export class MedicalEventService {
       });
     }
 
+    console.log(`[MedicalEventService] Created ${events.length} events from record ${record.id}`);
+    console.log(`[MedicalEventService] Event details:`, events.map(e => ({ id: e.id, type: e.eventType, title: e.title, date: e.date })));
     return events;
   }
 
@@ -195,14 +348,16 @@ export class MedicalEventService {
    * Extract the most reliable date from a record and extraction
    */
   private extractDate(record: MedicalRecord, extraction: StructuredExtraction): string | null {
-    // Priority: encounter date > record date > upload date
+    // Priority: encounter date > record date
+    // DO NOT use upload date as fallback - this would incorrectly assign today's date to historical events
     if (extraction.encounter.date) {
       return this.parseDate(extraction.encounter.date);
     }
     if (record.recordDate) {
       return record.recordDate;
     }
-    return record.uploadedAt;
+    // Return null if no date is available - individual entities will use their own dates
+    return null;
   }
 
   /**
@@ -231,6 +386,7 @@ export class MedicalEventService {
    * Deduplicate events across multiple records
    */
   deduplicateEvents(events: MedicalEvent[]): MedicalEvent[] {
+    console.log('[MedicalEventService] Deduplicating', events.length, 'events');
     const eventMap = new Map<string, MedicalEvent>();
 
     events.forEach((event) => {
@@ -250,7 +406,9 @@ export class MedicalEventService {
       }
     });
 
-    return Array.from(eventMap.values());
+    const deduplicated = Array.from(eventMap.values());
+    console.log('[MedicalEventService] After deduplication:', deduplicated.length, 'events');
+    return deduplicated;
   }
 
   /**
@@ -263,7 +421,9 @@ export class MedicalEventService {
       event.title,
       event.date,
     ];
-    return parts.filter(Boolean).join('|');
+    const key = parts.filter(Boolean).join('|');
+    console.log('[MedicalEventService] Event key:', key, 'for event:', event.title);
+    return key;
   }
 
   /**

@@ -16,7 +16,7 @@ export type DocumentType =
   | 'Other'
   | 'Unknown';
 
-export type ProcessingStatus = 'ready' | 'uploading' | 'uploaded' | 'processing' | 'ocr_processing' | 'extracting' | 'extracted' | 'extraction_failed' | 'failed';
+export type ProcessingStatus = 'ready' | 'uploading' | 'uploaded' | 'processing' | 'ocr_processing' | 'extracting' | 'extracted' | 'extraction_incomplete' | 'extraction_failed' | 'failed';
 
 export type FileType = 'PDF' | 'PNG' | 'JPG' | 'JPEG';
 

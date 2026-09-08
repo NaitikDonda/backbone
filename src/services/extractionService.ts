@@ -34,8 +34,15 @@ export class ExtractionService {
       } as ExtractionError;
     }
 
+    console.log(`[ExtractionService] Starting extraction for record ${recordId}`);
+    console.log(`[ExtractionService] Input text length: ${text.length} chars`);
+    console.log(`[ExtractionService] Number of pages: ${pages?.length || 0}`);
+
+    // Store original text for fallback parsing
+    const originalText = text;
+
     // Increase text limit for better extraction completeness
-    const MAX_TEXT_LENGTH = 20000; // Increased from 8000 to capture more information
+    const MAX_TEXT_LENGTH = 50000;
     let textToProcess = text;
     if (text.length > MAX_TEXT_LENGTH) {
       console.log(`[ExtractionService] Text too long (${text.length} chars), truncating to ${MAX_TEXT_LENGTH}`);
@@ -45,8 +52,26 @@ export class ExtractionService {
     try {
       const prompt = this.buildExtractionPrompt(textToProcess, recordId, pages);
       const response = await this.callOllama(prompt);
-      
-      const extraction = this.parseAndValidateExtraction(response, recordId, pages);
+
+      const extraction = this.parseAndValidateExtraction(response, recordId, pages, originalText);
+
+      // Log extraction quality metrics
+      console.log(`[ExtractionService] Extraction complete for record ${recordId}`);
+      console.log(`[ExtractionService] Extracted entities:`);
+      console.log(`  - Patient info: ${extraction.patient.name ? extraction.patient.name : 'N/A'}`);
+      console.log(`  - Symptoms: ${extraction.symptoms.length}`);
+      console.log(`  - Diagnoses: ${extraction.diagnoses.length}`);
+      console.log(`  - Lab results: ${extraction.labResults.length}`);
+      console.log(`  - Medications: ${extraction.medications.length}`);
+      console.log(`  - Procedures: ${extraction.procedures.length}`);
+      console.log(`  - Findings: ${extraction.findings.length}`);
+      console.log(`  - Allergies: ${extraction.allergies.length}`);
+      console.log(`  - Referrals: ${extraction.referrals.length}`);
+      console.log(`  - Follow-ups: ${extraction.followUps.length}`);
+      console.log(`  - Investigation plans: ${extraction.investigationPlans.length}`);
+      console.log(`  - Outcomes: ${extraction.outcomes.length}`);
+      console.log(`  - Medical history: ${extraction.medicalHistory.length}`);
+
       return extraction;
     } catch (error) {
       if (this.isExtractionError(error)) {
@@ -60,76 +85,57 @@ export class ExtractionService {
   }
 
   private buildExtractionPrompt(text: string, _recordId: string, _pages?: Array<{ pageNumber: number; text: string }>): string {
-    return `Extract medical information from this text as JSON.
+    return `Extract medical information from this medical record text and return ONLY this JSON:
 
-IMPORTANT: Return ONLY arrays for multi-value fields (symptoms, diagnoses, lab results, medications, procedures, findings, allergies, referrals, follow-ups, investigation plans, outcomes, medical history). Do NOT return comma-separated strings.
-
-Required JSON structure:
 {
-  "patient_info": {"name": "...", "age": ..., "sex": "...", "date": "..."},
-  "encounter_info": {"date": "...", "type": "...", "facility": "...", "department": "...", "physician": "..."},
-  "symptoms": [{"name": "...", "date": "...", "duration": "...", "severity": "...", "certainty": "present", "status": "..."}],
-  "diagnoses": [{"name": "...", "date": "...", "status": "...", "certainty": "..."}],
-  "lab_results": [{"testName": "...", "value": "...", "unit": "...", "referenceRange": "...", "isAbnormal": ..., "date": "..."}],
-  "medications": [{"name": "...", "dosage": "...", "frequency": "...", "route": "...", "startDate": "...", "endDate": "..."}],
-  "procedures": [{"name": "...", "date": "...", "result": "...", "finding": "..."}],
-  "findings": ["..."],
-  "allergies": [{"name": "...", "severity": "...", "reaction": "...", "status": "..."}],
-  "referrals": [{"specialty": "...", "reason": "...", "date": "...", "status": "..."}],
-  "follow_ups": [{"type": "...", "reason": "...", "date": "...", "status": "..."}],
-  "investigation_plans": [{"testName": "...", "reason": "...", "plannedDate": "...", "status": "..."}],
-  "outcomes": [{"description": "...", "category": "...", "date": "..."}],
-  "medical_history": [{"condition": "...", "type": "...", "date": "...", "status": "..."}]
+  "patient": {"name": "", "age": null, "sex": "", "dateOfBirth": ""},
+  "encounter": {"date": "", "type": "", "facility": "", "department": "", "reason": ""},
+  "symptoms": [],
+  "diagnoses": [],
+  "labResults": [],
+  "medications": [],
+  "procedures": [],
+  "findings": [],
+  "allergies": [],
+  "referrals": [],
+  "followUps": [],
+  "investigationPlans": [],
+  "outcomes": [],
+  "medicalHistory": []
 }
 
-Extract these categories if present:
-- Patient info (name, age, sex, date)
-- Encounter info (date, type, facility, department, physician)
-- Symptoms (name, date, duration, severity, certainty, status) - MUST be array of objects
-- Diagnoses (name, date, status, certainty) - Look for ASSESSMENT section - MUST be array of objects
-- Lab results (test name, value, unit, reference range, abnormal flag) - Only EXTRACTED results, not planned tests - MUST be array of objects
-- Medications (name, dosage, frequency, route, start date, end date) - If "None" or "No medications", return empty array - MUST be array of objects
-- Procedures (name, date, result, finding) - Look for PLAN section for planned procedures/referrals - MUST be array of objects
-- Findings (text, category) - Look for PHYSICAL EXAM, NEUROLOGICAL EXAM sections - MUST be array of strings
-- Allergies (name, severity, reaction, status) - Look for ALLERGIES section - MUST be array of objects
-- Referrals (specialty, reason, date, status) - Look for REFERRALS section - MUST be array of objects
-- Follow-ups (type, reason, date, status) - Look for FOLLOW-UP section - MUST be array of objects
-- Investigation plans (test name, reason, planned date, status) - Look for PLAN section - MUST be array of objects
-- Documented outcomes (procedure outcomes, treatment responses, resolution status) - MUST be array of objects
-- Relevant medical history (conditions, surgeries, hospitalizations) - Look for HISTORY section - MUST be array of objects
+Extract:
+- Patient: name, age, sex, date of birth
+- Encounter: date, type, facility, department, reason
+- Symptoms: name, date, duration, severity, certainty, status
+- Diagnoses: name, date, status, certainty
+- Lab results: test name, value, unit, reference range, abnormal flag, date
+- Medications: name, dosage, frequency, route, start date, end date
+- Procedures: name, date, result, finding
+- Findings: text descriptions
+- Allergies: name, severity, reaction, status
+- Referrals: specialty, reason, date, status
+- Follow-ups: type, reason, date, status
+- Investigation plans: test name, reason, planned date, status
+- Outcomes: description, category, date
+- Medical history: condition, type, date, status
 
-CRITICAL RULES:
-- ONLY extract information EXPLICITLY stated in the text
-- Do NOT infer diagnoses from lab results
-- Handle negation correctly: "denies X" = X is absent/denied, "None" = empty array
-- Handle uncertainty correctly: "possible X" = X is suspected, "rule out X" = X is ruled_out
-- Preserve status information: "ongoing", "resolved", "chronic", "completed", "unresolved", etc.
-- ASSESSMENT section contains diagnoses/assessments with status (e.g., "Fatigue - ongoing")
-- PLAN section contains planned actions, not actual results (e.g., "Repeat Vitamin B12 level" is a plan, not a result)
-- Distinguish between planned tests and actual lab results
-- If medications list says "None" or "No medications", return empty medications array
-- For dates: if exact date not provided, use approximate format (e.g., "2013", "approximately 2013") - do NOT invent exact day/month
-- For lab values: ensure test name matches its value and unit - do not swap values between tests
-- For durations: only calculate if source explicitly provides it - do not invent durations
-- ALL multi-value fields MUST be arrays, NOT comma-separated strings
+Return ONLY the JSON above with extracted data. No other text.
 
-Return ONLY the JSON object. No markdown, no explanations.
-
-TEXT:
+MEDICAL RECORD TEXT:
 ${text}`;
   }
 
   private async callOllama(prompt: string): Promise<string> {
     console.log('[ExtractionService] Calling Ollama with prompt length:', prompt.length);
-    
-    const systemPrompt = `You are a medical information extraction system. 
-You MUST respond ONLY with valid JSON. 
-Do NOT include any conversational text, explanations, or markdown formatting.
-Your entire response must be a single JSON object.
-If you cannot extract information, return an empty JSON object with the requested structure.`;
+
+    const systemPrompt = `You are a JSON data extractor. Your ONLY job is to extract structured data and return it as JSON.
+You MUST return the exact JSON structure specified in the prompt.
+Do NOT summarize, do NOT reformat, do NOT add explanations.
+Return ONLY the JSON object with the fields: patient, encounter, symptoms, diagnoses, labResults, medications, procedures, findings, allergies, referrals, followUps, investigationPlans, outcomes, medicalHistory.`;
 
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
+    const timeoutId = setTimeout(() => controller.abort(), 120000);
 
     try {
       const response = await fetch(`${this.ollamaBaseUrl}/api/generate`, {
@@ -140,9 +146,10 @@ If you cannot extract information, return an empty JSON object with the requeste
           system: systemPrompt,
           prompt,
           stream: false,
-          format: 'json', // Force JSON output
+          format: 'json',
           options: {
-            temperature: 0.1, // Low temperature for more deterministic output
+            temperature: 0.0,
+            num_ctx: 4096,
           },
         }),
         signal: controller.signal,
@@ -151,7 +158,9 @@ If you cannot extract information, return an empty JSON object with the requeste
       clearTimeout(timeoutId);
 
       if (!response.ok) {
-        throw new Error(`Ollama API error: ${response.status}`);
+        const errorText = await response.text();
+        console.error('[ExtractionService] Ollama API error:', response.status, errorText);
+        throw new Error(`Ollama API error: ${response.status} - ${errorText}`);
       }
 
       const data = await response.json();
@@ -161,8 +170,9 @@ If you cannot extract information, return an empty JSON object with the requeste
     } catch (error) {
       clearTimeout(timeoutId);
       if (error instanceof Error && error.name === 'AbortError') {
-        throw new Error('Ollama request timed out after 60 seconds');
+        throw new Error('Ollama request timed out after 120 seconds');
       }
+      console.error('[ExtractionService] Ollama call error:', error);
       throw error;
     }
   }
@@ -170,64 +180,79 @@ If you cannot extract information, return an empty JSON object with the requeste
   private parseAndValidateExtraction(
     response: string,
     recordId: string,
-    _pages?: Array<{ pageNumber: number; text: string }>
+    _pages?: Array<{ pageNumber: number; text: string }>,
+    originalText?: string
   ): StructuredExtraction {
     try {
       console.log('[ExtractionService] Parsing response, length:', response.length);
-      
-      // Try to extract JSON from response (may be wrapped in markdown)
-      let jsonText = response;
-      
-      // Remove markdown code blocks if present
-      const jsonMatch = response.match(/```(?:json)?\s*({[\s\S]*})\s*```/);
-      if (jsonMatch) {
-        jsonText = jsonMatch[1];
-        console.log('[ExtractionService] Extracted JSON from markdown code block');
+      console.log('[ExtractionService] Full response:', response);
+
+      // Try to extract JSON from response
+      let jsonMatch = response.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) {
+        console.error('[ExtractionService] No JSON object found in response');
+        throw new Error('No JSON object found in response');
       }
-      
-      // Try to find JSON object in the response
-      const objectMatch = response.match(/\{[\s\S]*\}/);
-      if (objectMatch && !jsonMatch) {
-        jsonText = objectMatch[0];
-        console.log('[ExtractionService] Extracted JSON from response using object match');
-      }
-      
+
+      let jsonText = jsonMatch[0];
       console.log('[ExtractionService] JSON text length after extraction:', jsonText.length);
-      console.log('[ExtractionService] JSON text preview:', jsonText.substring(0, 200));
-      
-      const parsed = JSON.parse(jsonText);
-      console.log('[ExtractionService] JSON parsed successfully, keys:', Object.keys(parsed));
-      
-      // Normalize parsed data - ensure arrays are always arrays, not strings
+      console.log('[ExtractionService] JSON text:', jsonText);
+
+      // Try to parse the JSON
+      let parsed;
+      try {
+        parsed = JSON.parse(jsonText);
+        console.log('[ExtractionService] Parsed JSON keys:', Object.keys(parsed));
+
+        // Check if Ollama returned the wrong structure (e.g., summary format)
+        if (!parsed.patient && !parsed.symptoms && !parsed.diagnoses && !parsed.medications) {
+          console.warn('[ExtractionService] Ollama returned wrong JSON structure, using fallback parser');
+          return this.parseFromText(response, recordId, originalText);
+        }
+      } catch (parseError) {
+        console.error('[ExtractionService] JSON parse error:', parseError);
+        // Try to repair common JSON issues
+        jsonText = this.repairJson(jsonText);
+        console.log('[ExtractionService] Attempting to parse repaired JSON');
+        parsed = JSON.parse(jsonText);
+        console.log('[ExtractionService] Repaired JSON parsed successfully');
+
+        // Check structure after repair
+        if (!parsed.patient && !parsed.symptoms && !parsed.diagnoses && !parsed.medications) {
+          console.warn('[ExtractionService] Repaired JSON has wrong structure, using fallback parser');
+          return this.parseFromText(response, recordId, originalText);
+        }
+      }
+
+      // Normalize the parsed data
       const normalized = this.normalizeParsedData(parsed);
-      
-      // Map model's key naming to our schema
+
+      // Map to our schema
       const extraction: StructuredExtraction = {
-        patient: this.mapPatientInfo(normalized.patient_info || normalized.patient || normalized['Patient Info'] || normalized.patientInfo || {}),
-        encounter: this.mapEncounterInfo(normalized.encounter_info || normalized.encounter || normalized['Encounter Info'] || normalized.encounterInfo || {}),
-        symptoms: this.mapSymptoms(normalized.symptoms || normalized.Symptoms || []),
-        diagnoses: this.mapDiagnoses(normalized.diagnoses || normalized.Diagnoses || []),
-        labResults: this.mapLabResults(normalized.lab_results || normalized.labResults || normalized['Lab Results'] || normalized.lab_results || []),
-        medications: this.mapMedications(normalized.medications || normalized.Medications || []),
-        procedures: this.mapProcedures(normalized.procedures || normalized.Procedures || []),
+        patient: this.mapPatientInfo(normalized.patient || normalized.patient_info || {}),
+        encounter: this.mapEncounterInfo(normalized.encounter || normalized.encounter_info || {}),
+        symptoms: this.mapSymptoms(normalized.symptoms || []),
+        diagnoses: this.mapDiagnoses(normalized.diagnoses || []),
+        labResults: this.mapLabResults(normalized.labResults || normalized.lab_results || []),
+        medications: this.mapMedications(normalized.medications || []),
+        procedures: this.mapProcedures(normalized.procedures || []),
         findings: normalized.findings || [],
-        allergies: this.mapAllergies(normalized.allergies || normalized.Allergies || []),
-        referrals: this.mapReferrals(normalized.referrals || normalized.Referrals || []),
-        followUps: this.mapFollowUps(normalized.follow_ups || normalized.followUps || normalized['Follow-ups'] || []),
-        investigationPlans: this.mapInvestigationPlans(normalized.investigation_plans || normalized.investigationplans || normalized['Investigation Plans'] || []),
-        outcomes: this.mapOutcomes(normalized.outcomes || normalized.Outcomes || []),
-        medicalHistory: this.mapMedicalHistory(normalized.medical_history || normalized.medicalHistory || normalized['Medical History'] || []),
+        allergies: this.mapAllergies(normalized.allergies || []),
+        referrals: this.mapReferrals(normalized.referrals || []),
+        followUps: this.mapFollowUps(normalized.followUps || []),
+        investigationPlans: this.mapInvestigationPlans(normalized.investigationPlans || []),
+        outcomes: this.mapOutcomes(normalized.outcomes || []),
+        medicalHistory: this.mapMedicalHistory(normalized.medicalHistory || []),
         sourceRecordId: recordId,
         extractedAt: new Date().toISOString(),
       };
 
-      // Validate lab results for test/value/unit mismatches
+      // Validate lab results
       if (extraction.labResults.length > 0) {
         const validations = labValidationService.validateLabResults(extraction.labResults);
         const hasIssues = validations.some(v => !v.isValid);
         if (hasIssues) {
           console.log('[ExtractionService] Lab validation issues detected:', validations.filter(v => !v.isValid).map(v => v.issues));
-          // Apply corrections where possible
           extraction.labResults = validations.map((v, i) => v.correctedResult || extraction.labResults[i]);
         }
       }
@@ -235,37 +260,247 @@ If you cannot extract information, return an empty JSON object with the requeste
       return extraction;
     } catch (error) {
       console.error('[ExtractionService] Parse error:', error);
-      console.error('[ExtractionService] Full response (first 1000 chars):', response.substring(0, 1000));
-      throw {
-        message: 'Failed to parse extraction response as JSON',
-        code: 'INVALID_JSON',
-      } as ExtractionError;
+      console.error('[ExtractionService] Full response:', response);
+      // Fallback to text-based parsing
+      console.warn('[ExtractionService] Using fallback text parser');
+      return this.parseFromText(response, recordId, originalText);
     }
   }
 
   /**
-   * Normalize parsed data to ensure arrays are always arrays, not strings
-   * Handles cases where AI returns comma-separated strings instead of arrays
+   * Fallback parser to extract entities from text-based response
+   * Used when Ollama returns wrong JSON structure
    */
+  private parseFromText(text: string, recordId: string, originalText?: string): StructuredExtraction {
+    console.log('[ExtractionService] Using fallback text parser');
+
+    // Use original OCR text if available, otherwise use the response text
+    const textToParse = originalText || text;
+
+    const extraction: StructuredExtraction = {
+      patient: { name: null, age: null, sex: null, dateOfBirth: null, patientId: null },
+      encounter: { date: null, type: null, facility: null, department: null, reason: null },
+      symptoms: [],
+      diagnoses: [],
+      labResults: [],
+      medications: [],
+      procedures: [],
+      findings: [],
+      allergies: [],
+      referrals: [],
+      followUps: [],
+      investigationPlans: [],
+      outcomes: [],
+      medicalHistory: [],
+      sourceRecordId: recordId,
+      extractedAt: new Date().toISOString(),
+    };
+
+    // Extract patient name - be more specific to avoid capturing too much text
+    const nameMatch = textToParse.match(/Patient Name:\s*([A-Za-z\s]+?)(?:\n|$)/i);
+    if (nameMatch) {
+      const name = nameMatch[1].trim();
+      // Only use if it looks like a name (2-3 words, reasonable length)
+      if (name.split(' ').length >= 2 && name.split(' ').length <= 4 && name.length < 50) {
+        extraction.patient.name = name;
+      }
+    }
+
+    // Extract age
+    const ageMatch = textToParse.match(/Age:\s*(\d+)/i);
+    if (ageMatch) {
+      extraction.patient.age = parseInt(ageMatch[1]);
+    }
+
+    // Extract symptoms
+    const symptomMatch = textToParse.match(/Chief Complaint:\s*([^\n]+)/i);
+    if (symptomMatch) {
+      const symptoms = symptomMatch[1].split(',').map(s => s.trim()).filter(s => s);
+      extraction.symptoms = symptoms.map(s => ({
+        name: s,
+        date: null,
+        duration: null,
+        severity: null,
+        certainty: 'present' as const,
+        status: null,
+        sourceText: s,
+      }));
+    }
+
+    // Extract diagnoses - handle multiple formats
+    const diagnosisSection = textToParse.match(/(?:History|Diagnosis|Diagnoses):\s*([^\n]+)/i);
+    if (diagnosisSection) {
+      const diagnoses = diagnosisSection[1].split(',').map(d => d.trim()).filter(d => d);
+      extraction.diagnoses = diagnoses.map(d => ({
+        name: d,
+        date: null,
+        status: 'active',
+        certainty: 'confirmed' as const,
+        datePrecision: 'unknown' as const,
+        sourceText: d,
+      }));
+    }
+
+    // Also extract diagnoses from table format (Diagnosis column)
+    const diagnosisTableMatches = textToParse.matchAll(/Type 2 Diabetes Mellitus|Diabetic Nephropathy|Hypertension|Dyslipidemia|Obesity|Gastro-esophageal/gi);
+    for (const match of diagnosisTableMatches) {
+      const diagnosisName = match[0].trim();
+      if (!extraction.diagnoses.some(d => d.name === diagnosisName)) {
+        extraction.diagnoses.push({
+          name: diagnosisName,
+          date: null,
+          status: 'active',
+          certainty: 'confirmed' as const,
+          datePrecision: 'unknown' as const,
+          sourceText: diagnosisName,
+        });
+      }
+    }
+
+    // Extract medications
+    const medicationMatches = textToParse.matchAll(/\*\s*([^*]+)\s*(\d+\s*(?:mg|mcg|g|ml|units)?)\s*(BD|OD|TID|QID|PRN|daily|weekly)/gi);
+    for (const match of medicationMatches) {
+      extraction.medications.push({
+        name: match[1].trim(),
+        dosage: match[2].trim(),
+        frequency: match[3].trim(),
+        route: null,
+        startDate: null,
+        endDate: null,
+        duration: null,
+        sourceText: match[0].trim(),
+      });
+    }
+
+    // Extract lab results from table format
+    const labTableMatches = textToParse.matchAll(/<td>([^<]+)<\/td><td>([^<]+)<\/td><td>([^<]+)<\/td>/gi);
+    for (const match of labTableMatches) {
+      const testName = match[1].trim();
+      const value = match[2].trim();
+      const unit = match[3].trim();
+
+      // Skip if not a valid lab test
+      if (testName && value && !testName.includes('CLINICAL IMPRESSION')) {
+        extraction.labResults.push({
+          testName,
+          value,
+          unit,
+          referenceRange: null,
+          isAbnormal: null,
+          date: null,
+          datePrecision: 'unknown' as const,
+          sourceText: `${testName}: ${value} ${unit}`,
+        });
+      }
+    }
+
+    // Also extract lab results from text format
+    const labMatches = textToParse.matchAll(/(\w+):\s*([\d.]+\s*(?:%|mg\/dL|mmol\/L|U\/L|ng\/mL|mg\/g|mL\/min))/gi);
+    for (const match of labMatches) {
+      const [_, testName, valueWithUnit] = match;
+      const valueMatch = valueWithUnit.match(/([\d.]+)\s*(.+)/);
+      if (valueMatch) {
+        extraction.labResults.push({
+          testName: testName.trim(),
+          value: valueMatch[1],
+          unit: valueMatch[2],
+          referenceRange: null,
+          isAbnormal: null,
+          date: null,
+          datePrecision: 'unknown' as const,
+          sourceText: match[0].trim(),
+        });
+      }
+    }
+
+    // Extract allergies
+    const allergyMatch = textToParse.match(/Allergy:\s*([^\n]+)/i);
+    if (allergyMatch) {
+      extraction.allergies.push({
+        name: allergyMatch[1].trim(),
+        severity: null,
+        reaction: null,
+        status: 'active',
+        sourceText: allergyMatch[1].trim(),
+      });
+    }
+
+    // Extract allergies from table format
+    const allergyTableMatches = textToParse.matchAll(/Sulfonamide|Penicillin|Aspirin/gi);
+    for (const match of allergyTableMatches) {
+      const allergyName = match[0].trim();
+      if (!extraction.allergies.some(a => a.name === allergyName)) {
+        extraction.allergies.push({
+          name: allergyName,
+          severity: null,
+          reaction: null,
+          status: 'active',
+          sourceText: allergyName,
+        });
+      }
+    }
+
+    console.log('[ExtractionService] Fallback parser extracted:', {
+      patient: extraction.patient.name,
+      symptoms: extraction.symptoms.length,
+      diagnoses: extraction.diagnoses.length,
+      medications: extraction.medications.length,
+      labResults: extraction.labResults.length,
+      allergies: extraction.allergies.length,
+    });
+
+    return extraction;
+  }
+
+  private repairJson(jsonText: string): string {
+    console.log('[ExtractionService] Attempting JSON repair');
+
+    // Remove trailing commas
+    let repaired = jsonText.replace(/,\s*([}\]])/g, '$1');
+
+    // Fix unterminated strings
+    const stringMatches = repaired.match(/"([^"\\]*(\\.[^"\\]*)*)/g);
+    if (stringMatches) {
+      stringMatches.forEach(match => {
+        if (!match.endsWith('"')) {
+          repaired = repaired.replace(match, match + '"');
+        }
+      });
+    }
+
+    // Close unclosed braces
+    const openBraces = (repaired.match(/\{/g) || []).length;
+    const closeBraces = (repaired.match(/\}/g) || []).length;
+    if (openBraces > closeBraces) {
+      repaired += '}'.repeat(openBraces - closeBraces);
+    }
+
+    // Close unclosed brackets
+    const openBrackets = (repaired.match(/\[/g) || []).length;
+    const closeBrackets = (repaired.match(/\]/g) || []).length;
+    if (openBrackets > closeBrackets) {
+      repaired += ']'.repeat(openBrackets - closeBrackets);
+    }
+
+    console.log('[ExtractionService] Repaired JSON length:', repaired.length);
+    return repaired;
+  }
+
   private normalizeParsedData(parsed: any): any {
     const arrayFields = [
-      'symptoms', 'diagnoses', 'lab_results', 'labResults', 'Lab Results',
+      'symptoms', 'diagnoses', 'lab_results', 'labResults',
       'medications', 'procedures', 'findings', 'allergies', 'referrals',
-      'follow_ups', 'followUps', 'Follow-ups', 'investigation_plans',
-      'investigationPlans', 'Investigation Plans', 'outcomes', 'medical_history',
-      'medicalHistory', 'Medical History'
+      'followUps', 'investigationPlans', 'outcomes', 'medicalHistory'
     ];
 
     const normalized = { ...parsed };
 
     for (const field of arrayFields) {
       if (normalized[field] && typeof normalized[field] === 'string') {
-        // Convert comma-separated string to array
         const value = normalized[field];
         if (value.trim() === '' || value === 'None' || value === 'none') {
           normalized[field] = [];
         } else {
-          // Split by comma and trim
           normalized[field] = value.split(',').map((item: string) => item.trim()).filter((item: string) => item);
         }
         console.log(`[ExtractionService] Normalized ${field} from string to array:`, normalized[field]);
@@ -277,159 +512,159 @@ If you cannot extract information, return an empty JSON object with the requeste
 
   private mapPatientInfo(patientInfo: any): ExtractedPatientInfo {
     return {
-      name: patientInfo.name || patientInfo.Name || null,
-      dateOfBirth: patientInfo.dateOfBirth || patientInfo.date_of_birth || patientInfo.date || patientInfo.Date || null,
-      age: patientInfo.age || patientInfo.Age || null,
-      sex: patientInfo.sex || patientInfo.Sex || null,
-      patientId: patientInfo.patientId || patientInfo.patient_id || null,
+      name: patientInfo.name || null,
+      dateOfBirth: patientInfo.dateOfBirth || null,
+      age: patientInfo.age || null,
+      sex: patientInfo.sex || null,
+      patientId: patientInfo.patientId || null,
     };
   }
 
   private mapEncounterInfo(info: any): any {
     return {
-      date: info.date || info.Date || null,
-      type: info.type || info.Type || null,
-      facility: info.facility || info.Facility || null,
-      department: info.department || info.Department || null,
+      date: info.date || null,
+      type: info.type || null,
+      facility: info.facility || null,
+      department: info.department || null,
       reason: info.reason || null,
     };
   }
 
   private mapSymptoms(symptoms: any[]): any[] {
     return symptoms.map(s => {
-      const dateValidation = dateValidationService.validateDate(s.date || s.Date || null, s.sourceText || s.name || s.Name || '');
-      const durationValidation = dateValidationService.validateDuration(s.duration || s.Duration || null, s.sourceText || s.name || s.Name || '');
-      
+      const dateValidation = dateValidationService.validateDate(s.date || null, s.sourceText || s.name || '');
+      const durationValidation = dateValidationService.validateDuration(s.duration || null, s.sourceText || s.name || '');
+
       return {
-        name: s.name || s.Name || '',
+        name: s.name || '',
         date: dateValidation.normalizedDate,
         duration: durationValidation.normalizedDuration,
-        severity: s.severity || s.Severity || null,
-        certainty: s.certainty || s.Certainty || 'present',
-        status: s.status || s.Status || null,
+        severity: s.severity || null,
+        certainty: s.certainty || 'present',
+        status: s.status || null,
         datePrecision: dateValidation.datePrecision,
-        sourceText: s.sourceText || s.name || s.Name || '',
+        sourceText: s.sourceText || s.name || '',
       };
     });
   }
 
   private mapDiagnoses(diagnoses: any[]): any[] {
     return diagnoses.map(d => {
-      const dateValidation = dateValidationService.validateDate(d.date || d.Date || null, d.sourceText || d.name || d.Name || '');
-      
+      const dateValidation = dateValidationService.validateDate(d.date || null, d.sourceText || d.name || '');
+
       return {
-        name: d.name || d.Name || '',
+        name: d.name || '',
         date: dateValidation.normalizedDate,
-        status: d.status || d.Status || 'active',
-        certainty: d.certainty || d.Certainty || 'confirmed',
+        status: d.status || 'active',
+        certainty: d.certainty || 'confirmed',
         datePrecision: dateValidation.datePrecision,
-        sourceText: d.sourceText || d.name || d.Name || '',
+        sourceText: d.sourceText || d.name || '',
       };
     });
   }
 
   private mapLabResults(labs: any[]): any[] {
     return labs.map(l => {
-      const dateValidation = dateValidationService.validateDate(l.date || l.Date || null, l.sourceText || `${l.testName || l.name || l.Name}: ${l.value || l.Value} ${l.unit || l.Unit || ''}` || '');
-      
+      const dateValidation = dateValidationService.validateDate(l.date || null, l.sourceText || `${l.testName || l.name}: ${l.value || ''} ${l.unit || ''}` || '');
+
       return {
-        testName: l.testName || l.test_name || l.name || l.Name || '',
-        value: l.value || l.Value || '',
-        unit: l.unit || l.Unit || null,
-        referenceRange: l.referenceRange || l.reference_range || null,
-        isAbnormal: l.isAbnormal || l.is_abnormal || null,
+        testName: l.testName || l.name || '',
+        value: l.value || '',
+        unit: l.unit || null,
+        referenceRange: l.referenceRange || null,
+        isAbnormal: l.isAbnormal || null,
         date: dateValidation.normalizedDate,
         datePrecision: dateValidation.datePrecision,
-        sourceText: l.sourceText || `${l.testName || l.name || l.Name}: ${l.value || l.Value} ${l.unit || l.Unit || ''}` || '',
+        sourceText: l.sourceText || `${l.testName || l.name}: ${l.value || ''} ${l.unit || ''}` || '',
       };
     });
   }
 
   private mapMedications(meds: any[]): any[] {
     return meds.map(m => ({
-      name: m.name || m.Name || '',
-      dosage: m.dosage || m.Dosage || null,
-      frequency: m.frequency || m.Frequency || null,
-      route: m.route || m.Route || null,
-      startDate: m.startDate || m.start_date || null,
-      endDate: m.endDate || m.end_date || null,
-      duration: m.duration || m.Duration || null,
-      sourceText: m.sourceText || `${m.name || m.Name} ${m.dosage || m.Dosage || ''}` || '',
+      name: m.name || '',
+      dosage: m.dosage || null,
+      frequency: m.frequency || null,
+      route: m.route || null,
+      startDate: m.startDate || null,
+      endDate: m.endDate || null,
+      duration: m.duration || null,
+      sourceText: m.sourceText || `${m.name} ${m.dosage || ''}` || '',
     }));
   }
 
   private mapProcedures(procedures: any[]): any[] {
     return procedures.map(p => {
-      const dateValidation = dateValidationService.validateDate(p.date || p.Date || null, p.sourceText || p.name || p.Name || '');
-      
+      const dateValidation = dateValidationService.validateDate(p.date || null, p.sourceText || p.name || '');
+
       return {
-        name: p.name || p.Name || '',
+        name: p.name || '',
         date: dateValidation.normalizedDate,
-        result: p.result || p.Result || null,
-        finding: p.finding || p.Finding || null,
-        status: p.status || p.Status || null,
+        result: p.result || null,
+        finding: p.finding || null,
+        status: p.status || null,
         datePrecision: dateValidation.datePrecision,
-        sourceText: p.sourceText || p.name || p.Name || '',
+        sourceText: p.sourceText || p.name || '',
       };
     });
   }
 
   private mapAllergies(allergies: any[]): any[] {
     return allergies.map(a => ({
-      name: a.name || a.Name || '',
-      severity: a.severity || a.Severity || null,
-      reaction: a.reaction || a.Reaction || null,
-      status: a.status || a.Status || 'active',
-      sourceText: a.sourceText || a.name || a.Name || '',
+      name: a.name || '',
+      severity: a.severity || null,
+      reaction: a.reaction || null,
+      status: a.status || 'active',
+      sourceText: a.sourceText || a.name || '',
     }));
   }
 
   private mapReferrals(referrals: any[]): any[] {
     return referrals.map(r => ({
-      specialty: r.specialty || r.Specialty || '',
-      reason: r.reason || r.Reason || null,
-      date: r.date || r.Date || null,
-      status: r.status || r.Status || 'unknown',
-      sourceText: r.sourceText || `${r.specialty || r.Specialty} referral` || '',
+      specialty: r.specialty || '',
+      reason: r.reason || null,
+      date: r.date || null,
+      status: r.status || 'unknown',
+      sourceText: r.sourceText || `${r.specialty} referral` || '',
     }));
   }
 
   private mapFollowUps(followUps: any[]): any[] {
     return followUps.map(f => ({
-      type: f.type || f.Type || '',
-      reason: f.reason || f.Reason || null,
-      date: f.date || f.Date || null,
-      status: f.status || f.Status || 'unknown',
-      sourceText: f.sourceText || f.type || f.Type || '',
+      type: f.type || '',
+      reason: f.reason || null,
+      date: f.date || null,
+      status: f.status || 'unknown',
+      sourceText: f.sourceText || f.type || '',
     }));
   }
 
   private mapInvestigationPlans(plans: any[]): any[] {
     return plans.map(p => ({
-      testName: p.testName || p.test_name || p.name || p.Name || '',
-      reason: p.reason || p.Reason || null,
-      plannedDate: p.plannedDate || p.planned_date || p.date || p.Date || null,
-      status: p.status || p.Status || 'planned',
-      sourceText: p.sourceText || `${p.testName || p.name || p.Name} investigation` || '',
+      testName: p.testName || p.name || '',
+      reason: p.reason || null,
+      plannedDate: p.plannedDate || p.date || null,
+      status: p.status || 'planned',
+      sourceText: p.sourceText || `${p.testName || p.name} investigation` || '',
     }));
   }
 
   private mapOutcomes(outcomes: any[]): any[] {
     return outcomes.map(o => ({
-      description: o.description || o.Description || '',
-      category: o.category || o.Category || 'other',
-      date: o.date || o.Date || null,
-      sourceText: o.sourceText || o.description || o.Description || '',
+      description: o.description || '',
+      category: o.category || 'other',
+      date: o.date || null,
+      sourceText: o.sourceText || o.description || '',
     }));
   }
 
   private mapMedicalHistory(history: any[]): any[] {
     return history.map(h => ({
-      condition: h.condition || h.Condition || '',
-      type: h.type || h.Type || 'condition',
-      date: h.date || h.Date || null,
-      status: h.status || h.Status || null,
-      sourceText: h.sourceText || h.condition || h.Condition || '',
+      condition: h.condition || '',
+      type: h.type || 'condition',
+      date: h.date || null,
+      status: h.status || null,
+      sourceText: h.sourceText || h.condition || '',
     }));
   }
 

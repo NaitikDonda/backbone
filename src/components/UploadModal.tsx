@@ -130,19 +130,92 @@ export function UploadModal({ isOpen, onClose, patientId, onUploadComplete, exis
         console.log('Starting extraction for:', file.file.name);
         try {
           const extraction = await extractionService.extractMedicalInformation(
-            ocrResult.text, 
+            ocrResult.text,
             record.id,
             ocrResult.pages
           );
           console.log('Extraction completed successfully');
           console.log('Extraction result:', extraction);
+
+          // Calculate extraction quality metrics
+          const totalEntities = extraction.symptoms.length +
+                              extraction.diagnoses.length +
+                              extraction.labResults.length +
+                              extraction.medications.length +
+                              extraction.procedures.length +
+                              extraction.findings.length +
+                              extraction.allergies.length +
+                              extraction.referrals.length +
+                              extraction.followUps.length +
+                              extraction.investigationPlans.length +
+                              extraction.outcomes.length +
+                              extraction.medicalHistory.length;
+
+          const extractionQuality = {
+            totalEntities,
+            symptoms: extraction.symptoms.length,
+            diagnoses: extraction.diagnoses.length,
+            labResults: extraction.labResults.length,
+            medications: extraction.medications.length,
+            procedures: extraction.procedures.length,
+            findings: extraction.findings.length,
+            allergies: extraction.allergies.length,
+            referrals: extraction.referrals.length,
+            followUps: extraction.followUps.length,
+            investigationPlans: extraction.investigationPlans.length,
+            outcomes: extraction.outcomes.length,
+            medicalHistory: extraction.medicalHistory.length,
+            hasPatientInfo: !!(extraction.patient.name || extraction.patient.age || extraction.patient.dateOfBirth),
+            hasEncounterInfo: !!(extraction.encounter.date || extraction.encounter.type),
+          };
+
+          console.log('Extraction quality metrics:', extractionQuality);
+
+          // Determine if extraction is complete enough
+          const isComplete = totalEntities > 0 || extractionQuality.hasPatientInfo || extractionQuality.hasEncounterInfo;
+
           record.structuredExtraction = extraction;
-          record.processingStatus = 'extracted';
+          record.processingStatus = isComplete ? 'extracted' : 'extraction_incomplete';
+          record.metadata = {
+            ...record.metadata,
+            extractionQuality,
+            extractedAt: new Date().toISOString(),
+          };
+
+          if (!isComplete) {
+            console.warn('Extraction incomplete - very few entities extracted');
+            record.processingError = `Extraction completed but only ${totalEntities} entities found. Document may have limited medical information or extraction may be incomplete.`;
+          }
         } catch (extractionError) {
           console.error('Extraction failed:', extractionError);
           console.error('Extraction error details:', JSON.stringify(extractionError, null, 2));
+
+          // FALLBACK: Save record with OCR text even if extraction fails
+          // This allows users to at least view the document
           record.processingStatus = 'extraction_failed';
-          record.processingError = 'Structured extraction failed. OCR text is available but medical information could not be extracted.';
+          record.processingError = 'Structured extraction failed. OCR text is available but medical information could not be extracted. This may be due to an AI model issue or document format.';
+
+          // Create minimal empty extraction to prevent crashes
+          record.structuredExtraction = {
+            patient: { name: null, age: null, sex: null, dateOfBirth: null, patientId: null },
+            encounter: { date: null, type: null, facility: null, department: null, reason: null },
+            symptoms: [],
+            diagnoses: [],
+            labResults: [],
+            medications: [],
+            procedures: [],
+            findings: [],
+            allergies: [],
+            referrals: [],
+            followUps: [],
+            investigationPlans: [],
+            outcomes: [],
+            medicalHistory: [],
+            sourceRecordId: record.id,
+            extractedAt: new Date().toISOString(),
+          };
+
+          console.warn('Saved record with fallback empty extraction due to extraction failure');
         }
 
         setPendingFiles((prev) =>

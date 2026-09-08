@@ -13,13 +13,20 @@ export function Journey() {
   const [expandedEventId, setExpandedEventId] = useState<string | null>(null);
 
   useEffect(() => {
-    const allEvents = records.flatMap(record => 
+    const allEvents = records.flatMap(record =>
       medicalEventService.createEventsFromRecord(record)
     );
     const deduplicatedEvents = medicalEventService.deduplicateEvents(allEvents);
     const { dated } = medicalEventService.separateByDate(deduplicatedEvents);
     const sortedEvents = medicalEventService.sortEventsChronologically(dated);
     setEvents(sortedEvents);
+
+    // Debug logging to verify data consistency
+    console.log('[Journey] Records loaded:', records.length);
+    console.log('[Journey] Events created:', allEvents.length);
+    console.log('[Journey] Events after deduplication:', deduplicatedEvents.length);
+    console.log('[Journey] Dated events:', dated.length);
+    console.log('[Journey] Event types:', sortedEvents.map(e => e.eventType));
   }, [records]);
 
   const hasEvents = events.length > 0;
