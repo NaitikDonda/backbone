@@ -107,11 +107,23 @@ export class ExtractionService {
 CRITICAL RULES:
 1. EXCLUDE from ALL fields: addresses, phone numbers, email addresses, clinic names, doctor names, signatures, disclaimers, footers, page numbers, "SYNTHETIC DATA" warnings, lab report headers, accession numbers, specimen types, collection dates (unless it's the encounter date), "Reg. No.", "Emp. ID", "e-signed", "NABL", "ISO", "Metropolis Healthcare", "AROGYA PATH", "Sunrise Corporate Tower", "Andheri West", "Mumbai", "Maharashtra", "India", "Ph:", "Email:", "Page 1", "Page 2", "Page 3"
 
-2. DIAGNOSES must ONLY be medical conditions or diseases. Examples of VALID diagnoses: "Type 2 Diabetes Mellitus", "Hypertension", "Dyslipidemia", "Diabetic Nephropathy", "Subclinical Hypothyroidism". Examples of INVALID: "Sunrise Corporate Tower", "Andheri West", "Mumbai 400058", "MD (Pathology)", "DMLT Lab Technician", "please contact the laboratory"
+2. DIAGNOSES must ONLY be medical conditions or diseases. 
+   VALID diagnoses: "Type 2 Diabetes Mellitus", "Hypertension", "Dyslipidemia", "Diabetic Nephropathy", "Subclinical Hypothyroidism", "Acute Appendicitis", "Acute Urticaria", "Sulfonamide Allergy", "Gastro-esophageal Reflux Disease", "Obesity", "Non-Proliferative Diabetic Retinopathy"
+   INVALID diagnoses (EXCLUDE ALL OF THESE):
+   - Physical exam findings: cyanosis, clubbing, pallor, icterus, lymphadenopathy, pedal edema, tenderness, organomegaly, wheals, angioedema, stridor, air entry, murmurs, pulses
+   - Symptoms: breathlessness, facial swelling, throat tightness, sore throat, body ache, cough, fever, nausea, vomiting, pain, itching, rash
+   - Lab test names: fasting glucose, LFT, KFT, TSH, lipid profile, urine microalbumin, CBC, HbA1c, ECG, echocardiography, TMT
+   - Medications: Pantoprazole, Metformin, Atorvastatin, Telmisartan, Glimepiride, Aspirin (these go in medications field, not diagnoses)
+   - Dietary/lifestyle advice: "reduce refined carbohydrates", "brisk walking", "dietary counselling", "lifestyle modification"
+   - Clinical notes: "up from 27.4 in 2016", "preferring an intensive lifestyle-modification trial first", "just below the diagnostic cutoff"
+   - Measurements: BMI, weight, blood pressure readings, lab values (mg/dL, %, etc.)
+   - Doctor credentials: MBBS, MD, "Reg. No.", "Consultant Pathologist"
+   - Assessment text: "well-built", "moderately obese male", "cardiovascular examination unremarkable"
+   - Plan/treatment text: "Tab. Pantoprazole 40mg OD", "review with reports in 1 week", "Dr. Meera Kulkarni"
 
 3. DATES: Extract dates in YYYY-MM-DD format. Look for "Collection Date", "Report Date", "Date of Birth", or dates associated with diagnoses/medications. If no clear date is found, use null. Do NOT extract random numbers as dates.
 
-4. SYMPTOMS: Only extract patient-reported symptoms like "fever", "headache", "chest pain". Exclude lab test names, vitals, or procedure names.
+4. SYMPTOMS: Only extract patient-reported symptoms like "fever", "headache", "chest pain", "nausea", "vomiting", "itching", "rash". Exclude lab test names, vitals, or procedure names.
 
 5. MEDICATIONS: Only extract actual drug names with dosages. Exclude "Specimen", "Venous blood", "EDTA/Plain/Fluoride", "Random Urine", "Fasting Status"
 

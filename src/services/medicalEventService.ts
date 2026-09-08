@@ -80,7 +80,7 @@ export class MedicalEventService {
         const invalidKeywords = [
           'Sunrise Corporate Tower', 'Andheri West', 'Mumbai', 'Maharashtra', 'India',
           'MD (Pathology)', 'MD (Diabetology)', 'DMLT Lab Technician', 'Emp. ID',
-          'Reg. No.', 'e-signed', 'SYNTHETIC DATA', 'NABL', 'ISO',
+          'Reg. No.', 'e-signed', 'SYNTHIC DATA', 'NABL', 'ISO',
           'Metropolis Healthcare', 'AROGYA PATH', 'Ph:', 'Email:', 'Page',
           'please contact the laboratory', 'Electronically Verified', 'Authorized',
           'Specimen', 'Venous blood', 'EDTA', 'Plain', 'Fluoride', 'Random Urine',
@@ -90,7 +90,28 @@ export class MedicalEventService {
           'URINE MICROALBUMIN', 'INFLAMMATORY MARKER', 'CLINICAL IMPRESSION',
           'REMARKS', 'Test Name', 'Result', 'Unit', 'Reference Range', 'Flag',
           'Accession No', 'Collected', 'Reported', 'Consultant Pathologist',
-          'Lab Technician', 'Sample Processing'
+          'Lab Technician', 'Sample Processing',
+          // Physical exam findings
+          'cyanosis', 'clubbing', 'pallor', 'icterus', 'lymphadenopathy', 'pedal edema',
+          'tenderness', 'organomegaly', 'wheals', 'angioedema', 'stridor', 'air entry',
+          'murmurs', 'pulses', 'well-built', 'moderately obese male', 'cardiovascular examination unremarkable',
+          // Symptoms (these should be in symptoms field, not diagnoses)
+          'breathlessness', 'facial swelling', 'throat tightness', 'sore throat', 'body ache',
+          'cough', 'fever', 'nausea', 'vomiting', 'pain', 'itching', 'rash',
+          // Lab test names
+          'fasting glucose', 'LFT', 'KFT', 'TSH', 'lipid profile', 'urine microalbumin',
+          'CBC', 'HbA1c', 'ECG', 'echocardiography', 'TMT',
+          // Medications (should be in medications field)
+          'Pantoprazole', 'Metformin', 'Atorvastatin', 'Telmisartan', 'Glimepiride', 'Aspirin',
+          // Dietary/lifestyle advice
+          'reduce refined carbohydrates', 'brisk walking', 'dietary counselling', 'lifestyle modification',
+          // Clinical notes and measurements
+          'up from 27.4 in 2016', 'preferring an intensive lifestyle-modification trial first',
+          'just below the diagnostic cutoff', 'BMI', 'weight', 'blood pressure',
+          // Doctor credentials
+          'MBBS', 'MD', 'Consultant Pathologist',
+          // Plan/treatment text
+          'Tab.', 'review with reports', 'Dr.',
         ];
 
         const diagnosisLower = diagnosis.name.toLowerCase();
