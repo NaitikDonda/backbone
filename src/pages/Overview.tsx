@@ -287,13 +287,23 @@ export function Overview() {
         <>
           {/* Patient Header */}
           <div className="mb-12">
-            <h1 className="text-display text-text-primary mb-2">
-              {safeDisplay(patientDemographics.name || 'Patient')}
-            </h1>
-            <p className="text-h2 text-text-secondary font-light mb-8">
-              {patientDemographics.age !== null ? `${patientDemographics.age} years old` : 'Age not documented'}
-              {patientDemographics.sex ? ` · ${safeDisplay(patientDemographics.sex)}` : ''}
-            </p>
+            <div className="flex items-start justify-between mb-2">
+              <div className="flex-1">
+                <h1 className="text-display text-text-primary mb-2">
+                  {safeDisplay(patientDemographics.name || 'Patient')}
+                </h1>
+                <p className="text-h2 text-text-secondary font-light mb-8">
+                  {patientDemographics.age !== null ? `${patientDemographics.age} years old` : 'Age not documented'}
+                  {patientDemographics.sex ? ` · ${safeDisplay(patientDemographics.sex)}` : ''}
+                </p>
+              </div>
+              <button
+                onClick={handleResetRecords}
+                className="btn btn-ghost text-small"
+              >
+                Reset Records
+              </button>
+            </div>
             
             {/* Secondary Information */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-small text-text-tertiary">
@@ -519,22 +529,16 @@ export function Overview() {
           </section>
 
           {/* Reset Controls */}
-          <div className="flex items-center gap-4 pt-8 border-t border-border-light">
-            <button
-              onClick={handleResetRecords}
-              className="btn btn-ghost text-small"
-            >
-              Reset Records
-            </button>
-            {hasSignals && (
+          {hasSignals && (
+            <div className="flex items-center gap-4 pt-8 border-t border-border-light">
               <button
                 onClick={handleResetAnalysis}
                 className="btn btn-ghost text-small"
               >
                 Reset Analysis
               </button>
-            )}
-          </div>
+            </div>
+          )}
         </>
       )}
     </div>
