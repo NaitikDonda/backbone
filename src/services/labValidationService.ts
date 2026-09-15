@@ -24,6 +24,11 @@ export class LabValidationService {
     'triglycerides': ['mg/dL', 'mmol/L'],
     'vitamin b12': ['pg/mL', 'pmol/L'],
     'tsh': ['mIU/L', 'μIU/mL'],
+    't3': ['ng/dL', 'nmol/L'],
+    't4': ['μg/dL', 'nmol/L'],
+    'free t3': ['pg/mL', 'pmol/L'],
+    'free t4': ['ng/dL', 'pmol/L'],
+    'thyroid stimulating hormone': ['mIU/L', 'μIU/mL'],
     'platelets': ['×10³/μL', '×10⁹/L'],
     'white blood cell': ['×10³/μL', '×10⁹/L'],
     'red blood cell': ['×10⁶/μL', '×10¹²/L'],
@@ -41,6 +46,11 @@ export class LabValidationService {
     'ldl': { min: 20, max: 250 },
     'hdl': { min: 20, max: 100 },
     'triglycerides': { min: 30, max: 1000 },
+    'tsh': { min: 0.4, max: 4.0 },
+    't3': { min: 80, max: 200 },
+    't4': { min: 4.5, max: 12.5 },
+    'free t3': { min: 2.0, max: 4.4 },
+    'free t4': { min: 0.8, max: 1.8 },
   };
 
   private constructor() {}

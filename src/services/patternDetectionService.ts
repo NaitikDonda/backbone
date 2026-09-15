@@ -148,7 +148,41 @@ export class PatternDetectionService {
       e.status === 'abnormal'
     );
 
-    // Group by normalized lab test name
+    console.log(`[PatternDetectionService] Detecting repeated lab abnormalities from ${labEvents.length} abnormal lab events`);
+
+    // Also detect single abnormal lab results as potential patterns
+    // This helps identify thyroid abnormalities even in single documents
+    for (const labEvent of labEvents) {
+      const labName = labEvent.title.toLowerCase();
+      
+      // Check for thyroid-related abnormalities
+      const thyroidKeywords = ['tsh', 't3', 't4', 'thyroid', 'free t3', 'free t4', 'thyroid stimulating hormone'];
+      const isThyroidRelated = thyroidKeywords.some(keyword => labName.includes(keyword));
+      
+      if (isThyroidRelated) {
+        console.log(`[PatternDetectionService] Found thyroid-related abnormal lab: ${labEvent.title} with value: ${labEvent.description}`);
+        
+        // Create a pattern for thyroid abnormality even if single occurrence
+        const pattern = this.createPattern(
+          patientId,
+          'repeated_lab_abnormality',
+          `Thyroid Abnormality: ${labEvent.title}`,
+          `Abnormal thyroid lab result detected: ${labEvent.title} with value ${labEvent.description || 'not specified'}. This may indicate thyroid dysfunction requiring review.`,
+          labEvent.date,
+          labEvent.date,
+          1,
+          [labEvent],
+          {
+            timeSpanYears: 0,
+            uniqueEncounters: 1,
+          }
+        );
+        
+        patterns.push(pattern);
+      }
+    }
+
+    // Group by normalized lab test name for repeated abnormalities
     const labGroups = this.groupByNormalizedTitle(labEvents);
 
     for (const [normalizedTitle, groupEvents] of labGroups) {

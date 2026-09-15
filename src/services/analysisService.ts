@@ -48,9 +48,10 @@ export class AnalysisService {
     journeySummary: string,
     forceRefresh: boolean = false
   ): Promise<AnalysisResult> {
-    console.log('[AnalysisService] Starting analysis for patient:', patientId);
-    console.log('[AnalysisService] Events count:', events.length);
-    console.log('[AnalysisService] Patterns count:', patterns.length);
+    console.log('[AnalysisService] Starting');
+    console.log('[AnalysisService] Records:', [...new Set(events.map(e => e.sourceRecordId))].length);
+    console.log('[AnalysisService] Events:', events.length);
+    console.log('[AnalysisService] Source documents:', [...new Set(events.map(e => e.sourceDocumentName))].sort());
     
     // Debug logging for dataset fingerprint
     const sourceDocuments = [...new Set(events.map(e => e.sourceDocumentName))].sort();
@@ -121,7 +122,8 @@ export class AnalysisService {
       console.log('[AnalysisService] Prompt length:', userPrompt.length);
 
       // Send to Ollama
-      console.log('[AnalysisService] Sending to Ollama...');
+      console.log('[AnalysisService] Calling Ollama');
+      console.log('[AnalysisService] Source documents in analysis input:', sourceDocuments.join(', '));
       const modelResponse = await this.ollamaService.generateJson<ModelSignalResponse>(
         userPrompt,
         SYSTEM_PROMPT

@@ -24,7 +24,7 @@ export class OllamaService {
   private constructor() {
     // Ollama base URL - configurable via environment variable
     this.baseUrl = import.meta.env.VITE_OLLAMA_BASE_URL || 'http://localhost:11434';
-    // Model name - configurable via environment variable
+    // Default model for general use
     this.model = import.meta.env.VITE_OLLAMA_MODEL || 'llama3.2';
     // Timeout for requests in milliseconds
     this.timeoutMs = 120000; // 2 minutes
@@ -74,12 +74,14 @@ export class OllamaService {
   /**
    * Send a prompt to Ollama and return the response
    */
-  async generate(prompt: string, systemPrompt?: string): Promise<string> {
+  async generate(prompt: string, systemPrompt?: string, format?: 'json' | 'text'): Promise<string> {
+    const outputFormat = format || 'json'; // Default to JSON if not specified
     console.log('[OllamaService] Starting generation...');
     console.log('[OllamaService] Model:', this.model);
     console.log('[OllamaService] Base URL:', this.baseUrl);
     console.log('[OllamaService] Prompt length:', prompt.length);
     console.log('[OllamaService] System prompt length:', systemPrompt?.length || 0);
+    console.log('[OllamaService] Format:', outputFormat);
     
     try {
       console.log('[OllamaService] Sending request to Ollama...');
@@ -93,11 +95,12 @@ export class OllamaService {
           prompt,
           system: systemPrompt,
           stream: false,
+          format: outputFormat === 'json' ? 'json' : undefined, // Only specify format for JSON mode
           options: {
             temperature: 0.3,
             top_p: 0.9,
             num_ctx: 4096, // Reduced context window for faster processing
-            num_predict: 1024, // Limit output tokens for faster generation
+            num_predict: 2048, // Allow more tokens for complete JSON responses
             mirostat: 2, // Enable mirostat for faster, better quality sampling
           },
         }),
@@ -134,39 +137,41 @@ export class OllamaService {
     try {
       console.log('[OllamaService] Raw response:', response);
       
-      // Remove markdown code blocks
-      let cleanedResponse = response;
+      // Step 1: Strip markdown code fences if present
+      let cleanedResponse = response
+        .replace(/```json\s*/gi, '')
+        .replace(/```\s*/g, '')
+        .trim();
       
-      // Remove ```json, ```python, ``` blocks
-      cleanedResponse = cleanedResponse.replace(/```json/g, '');
-      cleanedResponse = cleanedResponse.replace(/```python/g, '');
-      cleanedResponse = cleanedResponse.replace(/```/g, '');
+      // Step 2: Remove leading prose before the first [ or {
+      const arrayStart = cleanedResponse.indexOf('[');
+      const objectStart = cleanedResponse.indexOf('{');
       
-      // Remove Python code patterns (common in AI responses)
-      // Remove lines starting with common Python keywords
-      cleanedResponse = cleanedResponse.replace(/^import\s+.*$/gm, '');
-      cleanedResponse = cleanedResponse.replace(/^from\s+.*$/gm, '');
-      cleanedResponse = cleanedResponse.replace(/^def\s+.*$/gm, '');
-      cleanedResponse = cleanedResponse.replace(/^class\s+.*$/gm, '');
-      cleanedResponse = cleanedResponse.replace(/^print\s+.*$/gm, '');
+      let jsonString: string;
       
-      // Remove lines with # comments
-      cleanedResponse = cleanedResponse.replace(/^#.*$/gm, '');
-      
-      // Try to find the FIRST { and LAST } to get the complete JSON object
-      const jsonStart = cleanedResponse.indexOf('{');
-      const jsonEnd = cleanedResponse.lastIndexOf('}');
-      
-      if (jsonStart === -1 || jsonEnd === -1 || jsonStart > jsonEnd) {
+      if (arrayStart !== -1 && (objectStart === -1 || arrayStart < objectStart)) {
+        // Response contains a JSON array — find matching closing bracket
+        const jsonEnd = cleanedResponse.lastIndexOf(']');
+        if (jsonEnd === -1 || jsonEnd < arrayStart) {
+          throw new Error('No valid JSON array found in response');
+        }
+        jsonString = cleanedResponse.substring(arrayStart, jsonEnd + 1);
+      } else if (objectStart !== -1) {
+        // Response contains a JSON object — find matching closing brace
+        const jsonEnd = cleanedResponse.lastIndexOf('}');
+        if (jsonEnd === -1 || jsonEnd < objectStart) {
+          throw new Error('No valid JSON object found in response');
+        }
+        jsonString = cleanedResponse.substring(objectStart, jsonEnd + 1);
+      } else {
         console.error('[OllamaService] No valid JSON found in response');
         throw new Error('No valid JSON found in response');
       }
       
-      const jsonString = cleanedResponse.substring(jsonStart, jsonEnd + 1);
-      console.log('[OllamaService] Extracted JSON string:', jsonString);
+      console.log('[OllamaService] Extracted JSON string (first 500 chars):', jsonString.substring(0, 500));
       
       const parsed = JSON.parse(jsonString) as T;
-      console.log('[OllamaService] Parsed JSON:', parsed);
+      console.log('[OllamaService] Parsed JSON successfully');
       
       return parsed;
     } catch (error) {

@@ -3,16 +3,11 @@ import { Link } from 'react-router-dom';
 import { mockPatient } from '../data/mockData';
 import { useRecordStorage } from '../hooks/useRecordStorage';
 import { TimelineService } from '../services/timelineService';
-import { AnalysisService } from '../services/analysisService';
-import type { ClinicalSignal, MedicalEvent } from '../types';
+import type { MedicalEvent } from '../types';
 
 export function Overview() {
   const { records, deleteAllRecords } = useRecordStorage(mockPatient.id);
   const timelineService = TimelineService.getInstance();
-  const analysisService = AnalysisService.getInstance();
-  
-  const [clinicalSignals, setClinicalSignals] = useState<ClinicalSignal[]>([]);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
   
   const timelineData = timelineService.getTimeline(records);
   const events = timelineData.events;
@@ -77,65 +72,9 @@ export function Overview() {
     return { name, age, sex, dateOfBirth, patientId };
   }, [records]);
 
-  // Load saved analysis from localStorage
-  useEffect(() => {
-    const savedSignals = localStorage.getItem(`signals_${mockPatient.id}`);
-    if (savedSignals) setClinicalSignals(JSON.parse(savedSignals));
-  }, [mockPatient.id]);
-
-  // Save analysis to localStorage whenever it changes
-  useEffect(() => {
-    if (clinicalSignals.length > 0) {
-      localStorage.setItem(`signals_${mockPatient.id}`, JSON.stringify(clinicalSignals));
-    }
-  }, [clinicalSignals, mockPatient.id]);
-
-  const handleAnalyzeHealthHistory = async () => {
-    setIsAnalyzing(true);
-    try {
-      console.log('[Overview] Starting analysis with events:', timelineData.events.length);
-      console.log('[Overview] Events sample:', timelineData.events.slice(0, 3));
-      console.log('[Overview] All events source documents:', [...new Set(timelineData.events.map(e => e.sourceDocumentName))]);
-      console.log('[Overview] Patterns:', timelineData.patterns.length);
-      console.log('[Overview] Summary:', timelineData.summary);
-      
-      const result = await analysisService.analyzePatient(
-        mockPatient.id,
-        timelineData.events,
-        timelineData.patterns,
-        timelineData.summary
-      );
-      
-      console.log('[Overview] Analysis result:', result);
-      console.log('[Overview] Signals received:', result.signals.length);
-      
-      if (result.success) {
-        setClinicalSignals(result.signals);
-      } else {
-        console.error('[Overview] Analysis failed:', result.error);
-      }
-    } catch (error) {
-      console.error('[Overview] Analysis error:', error);
-    } finally {
-      setIsAnalyzing(false);
-    }
-  };
-
-  const handleResetAnalysis = () => {
-    localStorage.removeItem(`signals_${mockPatient.id}`);
-    localStorage.removeItem(`candidates_${mockPatient.id}`);
-    localStorage.removeItem(`gaps_${mockPatient.id}`);
-    localStorage.removeItem(`summary_${mockPatient.id}`);
-    setClinicalSignals([]);
-  };
-
   const handleResetRecords = () => {
     if (confirm('Are you sure you want to delete all records? This cannot be undone.')) {
       deleteAllRecords();
-      handleResetAnalysis();
-      // Clear analysis service cache
-      const analysisService = AnalysisService.getInstance();
-      analysisService.clearCache(mockPatient.id);
     }
   };
 
@@ -277,7 +216,6 @@ export function Overview() {
   };
 
   const hasRecords = records.length > 0;
-  const hasSignals = clinicalSignals.length > 0;
 
   return (
     <div className="max-w-5xl">
@@ -466,53 +404,7 @@ export function Overview() {
             </div>
           </section>
 
-          {/* Insights Preview */}
-          <section className="mb-16">
-            {hasSignals ? (
-              <>
-                <div className="flex items-center justify-between mb-8">
-                  <h2 className="text-h2 text-text-primary">Insights</h2>
-                  <Link to="/workspace/signals" className="text-accent-primary hover:text-accent-secondary transition-colors text-small">
-                    View all insights →
-                  </Link>
-                </div>
-                <div className="space-y-4">
-                  {clinicalSignals.slice(0, 3).map((signal) => (
-                    <div
-                      key={signal.id}
-                      className="bg-surface rounded-lg border border-border-light p-6"
-                    >
-                      <div className="flex items-start gap-4">
-                        <div className="flex-shrink-0">
-                          <span className="badge badge-primary">AI</span>
-                        </div>
-                        <div className="flex-1">
-                          <h3 className="text-h4 text-text-primary mb-2">{signal.title}</h3>
-                          <p className="text-body text-text-secondary leading-relaxed">
-                            {signal.summary || signal.whatWasDetected}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </>
-            ) : (
-              <div className="bg-surface rounded-lg border border-border-light p-8">
-                <h3 className="text-h3 text-text-primary mb-3">Discover what may be hidden in the records</h3>
-                <p className="text-body-large text-text-secondary mb-6 leading-relaxed">
-                  BACKBONE can analyze the longitudinal history for recurring patterns, unresolved issues, and relationships between medical events.
-                </p>
-                <button
-                  onClick={handleAnalyzeHealthHistory}
-                  disabled={isAnalyzing}
-                  className="btn btn-primary"
-                >
-                  {isAnalyzing ? 'Analyzing...' : 'Analyze Health History'}
-                </button>
-              </div>
-            )}
-          </section>
+
 
           {/* Documents Preview */}
           <section className="mb-16">
@@ -538,18 +430,6 @@ export function Overview() {
               ))}
             </div>
           </section>
-
-          {/* Reset Controls */}
-          {hasSignals && (
-            <div className="flex items-center gap-4 pt-8 border-t border-border-light">
-              <button
-                onClick={handleResetAnalysis}
-                className="btn btn-ghost text-small"
-              >
-                Reset Analysis
-              </button>
-            </div>
-          )}
         </>
       )}
     </div>

@@ -46,7 +46,7 @@ export class ContextBuilderService {
   private static instance: ContextBuilderService;
 
   // Maximum number of events to include in context
-  private readonly MAX_EVENTS = 30;
+  private readonly MAX_EVENTS = 200;
   
   // Maximum number of patterns to include in context
   private readonly MAX_PATTERNS = 10;
@@ -69,6 +69,11 @@ export class ContextBuilderService {
     patterns: Pattern[],
     summary: string
   ): AnalysisContext {
+    console.log('[ContextBuilder] Building analysis context');
+    console.log('[ContextBuilder] Input events:', events.length);
+    console.log('[ContextBuilder] Input patterns:', patterns.length);
+    console.log('[ContextBuilder] Source documents:', [...new Set(events.map(e => e.sourceDocumentName))].sort());
+    
     // Prioritize events for context
     const prioritizedEvents = this.prioritizeEvents(events).slice(0, this.MAX_EVENTS);
     
@@ -110,6 +115,9 @@ export class ContextBuilderService {
       medications: events.filter(e => e.eventType === 'medication').length,
       visits: events.filter(e => e.eventType === 'consultation' || e.eventType === 'hospital_visit').length,
     };
+
+    console.log('[ContextBuilder] Timeline events in context:', prioritizedEvents.length);
+    console.log('[ContextBuilder] Source documents in context:', [...new Set(prioritizedEvents.map(e => e.sourceDocumentName))].sort());
 
     return {
       patientId,

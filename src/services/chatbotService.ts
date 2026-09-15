@@ -21,6 +21,8 @@ CRITICAL RULES:
 4. Do NOT provide medical advice, diagnoses, or treatment recommendations.
 5. Do NOT make up or infer information that is not in the records.
 6. If the records are empty or insufficient, respond: "No medical records are available to answer this question."
+7. ALWAYS respond in plain conversational text - NEVER return JSON, XML, or structured data
+8. For greetings like "hi" or "hello", respond naturally as a helpful assistant
 
 ANSWERING RULES:
 - Only use facts explicitly stated in the provided records
@@ -29,6 +31,7 @@ ANSWERING RULES:
 - If asked about providers, only use provider names that appear in the records
 - Be concise and direct
 - Reference the specific record or document when possible (e.g., "According to the lab report from March 2024...")
+- Always respond in plain conversational English
 
 EXAMPLES:
 Good: "According to the lab report from March 12, 2024, the hemoglobin level was 9.2 g/dL."
@@ -40,7 +43,10 @@ Bad: "The patient has chronic fatigue syndrome." (diagnostic)
 Good: "I cannot answer this question about diabetes treatment as it is not mentioned in the available records."
 Bad: "Common diabetes treatments include metformin..." (external knowledge)
 
-Remember: You are a record-based assistant, not a medical advisor. Stick strictly to what is documented.`;
+Good: "Hello! I'm here to help you answer questions based on the available medical records."
+Bad: {"@context": "https://schema.org", ...} (structured data)
+
+Remember: You are a record-based assistant, not a medical advisor. Stick strictly to what is documented and always respond in plain text.`;
 
 export class ChatbotService {
   private static instance: ChatbotService;
@@ -147,22 +153,14 @@ export class ChatbotService {
       // Build context from records
       const recordsContext = this.buildRecordsContext(records);
 
-      // Build conversation history
-      const messages: Array<{ role: string; content: string }> = [
-        { role: 'system', content: CHATBOT_SYSTEM_PROMPT },
-        { role: 'user', content: `${recordsContext}\n\nQuestion: ${userMessage}` },
-      ];
+      // Build the user prompt with context
+      const userPrompt = `${recordsContext}\n\nQuestion: ${userMessage}`;
 
-      // Add conversation history (last 10 messages to stay within context limits)
-      const recentHistory = this.conversationHistory.slice(-10);
-      for (const msg of recentHistory) {
-        messages.push({ role: msg.role, content: msg.content });
-      }
-
-      // Send to Ollama
+      // Send to Ollama (use text format for conversational responses)
       const response = await this.ollamaService.generate(
-        messages.map(m => `${m.role}: ${m.content}`).join('\n\n'),
-        CHATBOT_SYSTEM_PROMPT
+        userPrompt,
+        CHATBOT_SYSTEM_PROMPT,
+        'text' // Use text format for conversational responses
       );
 
       // Add to conversation history

@@ -1,0 +1,68 @@
+name: backbone_mobile
+description: "BACKBONE - Private medical records analysis with 100% on-device AI"
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.12.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # iOS-style UI
+  cupertino_icons: ^1.0.8
+
+  # State management
+  provider: ^6.1.1
+  
+  # Local storage
+  shared_preferences: ^2.2.2
+  sqflite: ^2.3.0
+  path_provider: ^2.1.1
+  
+  # File handling
+  file_picker: ^6.1.1
+  path: ^1.8.3
+  
+  # Model download (GGUF file from HuggingFace)
+  dio: ^5.4.1
+
+  # HTTP only for model download progress — NOT for AI inference
+  http: ^1.1.0
+  
+  # JSON handling
+  json_annotation: ^4.12.0
+  
+  # Date handling
+  intl: ^0.20.3
+
+  # PDF text extraction (100% on-device, no external API)
+  syncfusion_flutter_pdf: ^28.2.6
+
+
+  # ── ON-DEVICE MEDICAL PARSING & AI ENGINES ──
+  # Runs 100% on-device. No API. No cloud. Zero data leaves device.
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^6.0.0
+  build_runner: ^2.4.6
+  json_serializable: ^6.7.1
+  flutter_launcher_icons: ^0.14.4
+
+flutter:
+  uses-material-design: true
+  
+  assets:
+    - assets/images/
+    - assets/models/
+
+flutter_launcher_icons:
+  ios: true
+  android: true
+  image_path: "../app_icon/icon.png"
+
