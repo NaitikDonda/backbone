@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
-import 'package:file_picker/file_picker.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:backbone_mobile/providers/patient_provider.dart';
 import 'package:backbone_mobile/services/ocr_service.dart';
 import 'package:backbone_mobile/services/local_ai_service.dart';
@@ -456,13 +456,11 @@ class _RecordsScreenState extends State<RecordsScreen> {
 
   Future<void> _pickPDF() async {
     try {
-      final result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['pdf'],
-      );
-
-      if (result != null && result.files.single.path != null) {
-        await _processPDF(result.files.single.path!);
+      final picker = ImagePicker();
+      final result = await picker.pickImage(source: ImageSource.gallery);
+      
+      if (result != null) {
+        await _processPDF(result.path);
       }
     } catch (e) {
       _showError('Failed to pick file: $e');
